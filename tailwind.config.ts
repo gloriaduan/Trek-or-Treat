@@ -9,9 +9,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#EB5E28",
+        black: "#221E22",
+        white: "#FFFCF2"
       },
+      fontFamily: {
+        "poppins": ["var(--font-poppins)", "sans-serif"]
+      }
     },
   },
   plugins: [],
