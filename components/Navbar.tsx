@@ -44,7 +44,7 @@ async function Navbar() {
             <div className="flex items-center gap-5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="flex items-end gap-1">
+                  <div className="flex items-end gap-1 cursor-pointer">
                     <div className="flex items-center gap-3">
                       <Image
                         src={`${user?.imageUrl}`}

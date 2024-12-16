@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* UTILITIES */
+
 @layer utilities {
   .container {
     @apply max-w-screen-xl mx-auto px-5 xl:px-0;
@@ -122,4 +124,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* CLERK PROFILE PAGE */
+
+.cl-userProfile-root {
+  width: 100%;
+}
+
+.cl-cardBox {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
 }
