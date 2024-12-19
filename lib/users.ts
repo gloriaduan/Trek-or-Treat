@@ -29,7 +29,6 @@ export async function updateUser(id: string, data: Partial<User>) {
             },
             data
         })
-
         return {user};
     }catch(e) {
         console.log(`error occurred: ${e}`);
@@ -37,6 +36,12 @@ export async function updateUser(id: string, data: Partial<User>) {
     }
 }
 
-export async function deleteUser(id: string) {
-
+export async function deleteUser(id: string | undefined) {
+    try {
+        const user = await prisma.user.delete({where: {clerkUserId: id}});
+        return {user};
+    }catch (e) {
+        console.log(`error occurred: ${e}`);
+        return {error: e};
+    }
 }

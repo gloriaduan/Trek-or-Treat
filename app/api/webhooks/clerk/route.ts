@@ -1,7 +1,7 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import {currentUser, WebhookEvent} from '@clerk/nextjs/server'
-import {createUser, updateUser} from "@/lib/users";
+import {createUser, updateUser, deleteUser} from "@/lib/users";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET
@@ -76,6 +76,9 @@ export async function POST(req: Request) {
     }catch (e) {
       return new Response(`Error has occurred: ${e}`, { status: 500 })
     }
+  }else if (eventType == 'user.deleted') {
+    const user = await deleteUser(id)
+    return new Response(`User deleted: ${user}`, { status: 200 })
   }
 
   return new Response('Webhook received', { status: 200 })

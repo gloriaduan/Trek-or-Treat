@@ -4,6 +4,10 @@
 
 /* UTILITIES */
 
+html {
+  @apply text-black;
+}
+
 @layer utilities {
   .container {
     @apply max-w-screen-xl mx-auto px-5 xl:px-0;
@@ -16,9 +20,9 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 46, 100%, 97%;
 
-    --foreground: 0 0% 3.9%;
+    --foreground: 300, 6%, 13%;
 
     --card: 0 0% 100%;
 

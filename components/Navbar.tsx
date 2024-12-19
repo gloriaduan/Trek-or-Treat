@@ -70,7 +70,9 @@ async function Navbar() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <span>Post a Location</span>
+                      <Link href="/create-post" className="w-full">
+                        Post a Location
+                      </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
