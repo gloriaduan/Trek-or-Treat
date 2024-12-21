@@ -16,6 +16,14 @@ html {
   .btn-primary {
     @apply bg-primary text-white font-medium px-5 py-2 rounded-lg h-full;
   }
+
+  .btn-dark {
+    @apply bg-black text-white font-medium px-5 py-2 rounded-lg h-full;
+  }
+
+  .light-label label {
+    @apply text-white;
+  }
 }
 
 @layer base {
@@ -140,4 +148,9 @@ html {
   width: 100%;
   max-width: 100%;
   border-radius: 0;
+}
+
+/* GEOCODER */
+mapbox-geocoder input {
+  @apply bg-white rounded-md !important;
 }
