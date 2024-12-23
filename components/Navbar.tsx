@@ -3,7 +3,6 @@ import {
   SignedOut,
   SignInButton,
   SignOutButton,
-  UserButton,
 } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";

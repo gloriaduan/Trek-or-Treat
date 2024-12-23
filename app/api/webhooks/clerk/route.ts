@@ -1,6 +1,6 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import {currentUser, WebhookEvent} from '@clerk/nextjs/server'
+import { WebhookEvent} from '@clerk/nextjs/server'
 import {createUser, updateUser, deleteUser} from "@/lib/users";
 
 export async function POST(req: Request) {
@@ -58,7 +58,6 @@ export async function POST(req: Request) {
       const {id, username, image_url} = evt.data
       const newUser = {clerkUserId: id, username, avatar: image_url}
 
-      // @ts-ignore
       const user = await createUser(newUser)
 
       return new Response(`New user created: ${user}`, { status: 200 })
@@ -70,7 +69,6 @@ export async function POST(req: Request) {
       const {id, username, image_url} = evt.data
       const updatedUser = {username, avatar: image_url}
 
-      // @ts-ignore
       const user = await updateUser(id, updatedUser)
       return new Response(`User updated: ${user}`, { status: 200 })
     }catch (e) {
