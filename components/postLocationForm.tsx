@@ -65,7 +65,7 @@ const PostLocationForm = () => {
       });
 
       if (response.ok) {
-        // Handle successful deletion (e.g., update state)
+        setImages((prev) => prev.filter((img) => img.key != key));
         console.log("file deleted");
       } else {
         console.error("Failed to delete file");
@@ -77,7 +77,7 @@ const PostLocationForm = () => {
 
   const imgList = (
     <>
-      <ul>
+      <ul className="flex flex-col gap-2">
         {images.map((img) => (
           <li
             key={img.key}
