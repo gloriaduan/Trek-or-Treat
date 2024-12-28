@@ -1,5 +1,5 @@
 "use client";
-import React, { ComponentType, useState } from "react";
+import React, { ComponentType, useActionState, useState } from "react";
 import dynamic from "next/dynamic";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,8 @@ import { UploadDropzone } from "@/lib/uploadthing";
 import Image from "next/image";
 import Link from "next/link";
 import { CircleX } from "lucide-react";
+import { locationSchema } from "@/lib/validation";
+import { set, z } from "zod";
 
 interface GeocoderProps {
   accessToken: string;
@@ -39,13 +41,50 @@ interface Result {
 }
 
 const PostLocationForm = () => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [address, setAddress] = useState("");
-
   const [images, setImages] = useState<
     { key: string; name: string; url: string }[]
   >([]);
+
+  const handleSubmit = async (prevState: any, formData: FormData) => {
+    try {
+      console.log("Form submitted");
+      const formValues = {
+        address: address,
+        longitude: longitude,
+        latitude: latitude,
+        description: formData.get("description") as string,
+        images: images
+      };
+      
+      console.log(formValues);
+
+      await locationSchema.parseAsync(formValues);
+
+
+
+    } catch (error) {
+      if(error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors
+        console.log(fieldErrors)
+
+        setErrors(fieldErrors as unknown as Record<string, string>);
+
+        return { ...prevState, error: "Validation failed."};
+      }
+
+      return {
+        ...prevState,
+        error: "Failed to submit form.",
+      };
+    }
+  }
+
+  const [state, formAction, isPending] = useActionState(handleSubmit, {error: ""});
+
 
   const handleRetrieve = (res: Result) => {
     console.log("selected location:", res);
@@ -110,7 +149,7 @@ const PostLocationForm = () => {
   );
 
   return (
-    <form>
+    <form action={formAction}>
       <div className="py-10 px-5 bg-primary max-w-3xl rounded-lg flex flex-col gap-4 light-label shadow-md mx-auto">
         <div className="grid w-full items-center gap-1.5">
           <Label>Search for your address</Label>
@@ -134,6 +173,7 @@ const PostLocationForm = () => {
             readOnly
             required
           />
+           {errors.address && <p className="form-error">{errors.address}</p>}
         </div>
         <div className="flex flex-col md:flex-row gap-3">
           <div className="grid w-full items-center gap-1.5">
@@ -146,6 +186,7 @@ const PostLocationForm = () => {
               readOnly
               required
             />
+           {errors.longitude && <p className="form-error">{errors.longitude}</p>}
           </div>
           <div className="grid w-full items-center gap-1.5">
             <Label htmlFor="latitude">Latitude</Label>
@@ -157,11 +198,13 @@ const PostLocationForm = () => {
               readOnly
               required
             />
+           {errors.latitude && <p className="form-error">{errors.latitude}</p>}
           </div>
         </div>
         <div className="grid w-full gap-1.5">
           <Label htmlFor="message">Description</Label>
-          <Textarea placeholder="Tell us more..." id="message" />
+          <Textarea placeholder="Tell us more..." id="message" name="description" />
+          {errors.description && <p className="form-error">{errors.description}</p>}
         </div>
         <div className="grid w-full gap-1.5">
           <UploadDropzone
@@ -187,9 +230,10 @@ const PostLocationForm = () => {
               alert(`ERROR! ${error.message}`);
             }}
           />
+           {errors.images && <p className="form-error">{errors.images}</p>}
           {imgList}
         </div>
-        <button className="btn-dark">Submit</button>
+        <button className="btn-dark" disabled={isPending ? true : false}>{isPending ? 'Submitting...' : 'Submit'}</button>
       </div>
     </form>
   );
