@@ -21,14 +21,6 @@ model Location {
   description String
   latitude    Float
   longitude   Float
-  images      Image[]
+  images      String[]
   createdAt   DateTime @default(now())
-}
-
-model Image {
-  id       String   @id
-  url      String
-  name     String
-  location Location @relation(fields: [locationId], references: [id])
-  locationId String
 }

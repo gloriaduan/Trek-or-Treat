@@ -139,7 +139,6 @@ html {
 }
 
 /* CLERK PROFILE PAGE */
-
 .cl-userProfile-root {
   width: 100%;
 }
@@ -153,4 +152,13 @@ html {
 /* GEOCODER */
 mapbox-geocoder input {
   @apply bg-white rounded-md !important;
+}
+
+/* UPLOADTHING */
+.upload-progress > *[data-ut-element="button"][data-state="uploading"]::after {
+  @apply bg-black;
+}
+
+.focus-within\:ring-2:focus-within {
+  box-shadow: none !important;
 }

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { CircleX } from "lucide-react";
 import { locationSchema } from "@/lib/validation";
 import { set, z } from "zod";
+import { postLocation } from "@/lib/postLocation";
 
 interface GeocoderProps {
   accessToken: string;
@@ -51,29 +52,38 @@ const PostLocationForm = () => {
 
   const handleSubmit = async (prevState: any, formData: FormData) => {
     try {
-      console.log("Form submitted");
+      console.log("Form submitted.");
       const formValues = {
         address: address,
         longitude: longitude,
         latitude: latitude,
         description: formData.get("description") as string,
-        images: images
+        images: images,
       };
-      
-      console.log(formValues);
+
+      // console.log(formValues);
 
       await locationSchema.parseAsync(formValues);
 
+      const response = await postLocation(formValues);
 
-
+      if (response.status === "SUCCESS") {
+        console.log("Location posted successfully");
+        setErrors({});
+        setLongitude(0);
+        setLatitude(0);
+        setAddress("");
+        setImages([]);
+        return response;
+      }
     } catch (error) {
-      if(error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors
-        console.log(fieldErrors)
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors;
+        // console.log(fieldErrors);
 
         setErrors(fieldErrors as unknown as Record<string, string>);
 
-        return { ...prevState, error: "Validation failed."};
+        return { ...prevState, error: "Validation failed." };
       }
 
       return {
@@ -81,10 +91,11 @@ const PostLocationForm = () => {
         error: "Failed to submit form.",
       };
     }
-  }
+  };
 
-  const [state, formAction, isPending] = useActionState(handleSubmit, {error: ""});
-
+  const [state, formAction, isPending] = useActionState(handleSubmit, {
+    error: "",
+  });
 
   const handleRetrieve = (res: Result) => {
     console.log("selected location:", res);
@@ -126,7 +137,7 @@ const PostLocationForm = () => {
               <Image
                 src={img.url}
                 alt={img.url}
-                className="w-50"
+                className="w-50 h-auto"
                 width={50}
                 height={50}
               />
@@ -173,7 +184,7 @@ const PostLocationForm = () => {
             readOnly
             required
           />
-           {errors.address && <p className="form-error">{errors.address}</p>}
+          {errors.address && <p className="form-error">{errors.address}</p>}
         </div>
         <div className="flex flex-col md:flex-row gap-3">
           <div className="grid w-full items-center gap-1.5">
@@ -186,7 +197,9 @@ const PostLocationForm = () => {
               readOnly
               required
             />
-           {errors.longitude && <p className="form-error">{errors.longitude}</p>}
+            {errors.longitude && (
+              <p className="form-error">{errors.longitude}</p>
+            )}
           </div>
           <div className="grid w-full items-center gap-1.5">
             <Label htmlFor="latitude">Latitude</Label>
@@ -198,17 +211,23 @@ const PostLocationForm = () => {
               readOnly
               required
             />
-           {errors.latitude && <p className="form-error">{errors.latitude}</p>}
+            {errors.latitude && <p className="form-error">{errors.latitude}</p>}
           </div>
         </div>
         <div className="grid w-full gap-1.5">
           <Label htmlFor="message">Description</Label>
-          <Textarea placeholder="Tell us more..." id="message" name="description" />
-          {errors.description && <p className="form-error">{errors.description}</p>}
+          <Textarea
+            placeholder="Tell us more..."
+            id="message"
+            name="description"
+          />
+          {errors.description && (
+            <p className="form-error">{errors.description}</p>
+          )}
         </div>
         <div className="grid w-full gap-1.5">
           <UploadDropzone
-            className="mt-4 bg-white/70 ut-label:text-black ut-allowed-content:text-primary ut-upload-icon:text-white ut-button:bg-primary ut-button:ut-readying:bg-primary"
+            className="mt-4 bg-white/70 ut-label:text-black ut-allowed-content:text-primary ut-upload-icon:text-white ut-button:bg-primary ut-button:ut-readying:bg-primary upload-progress"
             endpoint="imageUploader"
             onClientUploadComplete={(res) => {
               if (res) {
@@ -230,10 +249,12 @@ const PostLocationForm = () => {
               alert(`ERROR! ${error.message}`);
             }}
           />
-           {errors.images && <p className="form-error">{errors.images}</p>}
+          {errors.images && <p className="form-error">{errors.images}</p>}
           {imgList}
         </div>
-        <button className="btn-dark" disabled={isPending ? true : false}>{isPending ? 'Submitting...' : 'Submit'}</button>
+        <button className="btn-dark" disabled={isPending ? true : false}>
+          {isPending ? "Submitting..." : "Submit"}
+        </button>
       </div>
     </form>
   );
