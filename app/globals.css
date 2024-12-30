@@ -24,6 +24,10 @@ html {
   .light-label label {
     @apply text-white;
   }
+
+  .h-full-height {
+    height: calc(100vh - 72px);
+  }
 }
 
 @layer base {

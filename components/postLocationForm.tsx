@@ -10,7 +10,7 @@ import Link from "next/link";
 import { CircleX } from "lucide-react";
 import { locationSchema } from "@/lib/validation";
 import { set, z } from "zod";
-import { postLocation } from "@/lib/postLocation";
+import { deleteFile, postLocation } from "@/lib/locations";
 
 interface GeocoderProps {
   accessToken: string;
@@ -99,22 +99,16 @@ const PostLocationForm = () => {
 
   const handleRetrieve = (res: Result) => {
     console.log("selected location:", res);
-    setLongitude(res.geometry.coordinates[0]);
     setLatitude(res.geometry.coordinates[1]);
+    setLongitude(res.geometry.coordinates[0]);
     setAddress(res.properties.full_address);
   };
 
   const handleDelete = async (key: string) => {
     try {
-      const response = await fetch("/api/uploadthing/deleteFile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ key }),
-      });
+      const response = await deleteFile(key);
 
-      if (response.ok) {
+      if (response.status === "SUCCESS") {
         setImages((prev) => prev.filter((img) => img.key != key));
         console.log("file deleted");
       } else {
