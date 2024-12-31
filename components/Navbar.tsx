@@ -22,7 +22,7 @@ async function Navbar() {
   const user = await currentUser();
 
   return (
-    <header className="bg-black py-4">
+    <header className="bg-black py-4 border-b-white/30 border-b-2">
       <nav className="container flex justify-between items-center">
         <Link href="/">
           <Image
