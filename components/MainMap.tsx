@@ -4,8 +4,17 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Map, { Marker } from "react-map-gl";
+import MapModal from "./MapModal";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
 
-interface Location {
+interface CustomLocation {
   id: string;
   address: string;
   longitude: number;
@@ -16,10 +25,19 @@ interface Location {
 }
 
 interface MainMapProps {
-  locations?: Location[];
+  locations?: CustomLocation[];
 }
 
 const MainMap = ({ locations = [] }: MainMapProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currLocation, setCurrLocation] = useState({} as CustomLocation);
+
+  const handleMarkerClick = (location: CustomLocation) => {
+    // console.log(location.address);
+    setCurrLocation(location);
+    setIsOpen(true);
+  };
+
   return (
     <>
       <Map
@@ -39,6 +57,9 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
             latitude={location.latitude}
             color="orange"
             anchor="bottom"
+            onClick={() => {
+              handleMarkerClick(location);
+            }}
           >
             <Image
               src="/map-pin.png"
@@ -49,6 +70,11 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
           </Marker>
         ))}
       </Map>
+      <MapModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        currLocation={currLocation as CustomLocation}
+      />
     </>
   );
 };
