@@ -11,6 +11,7 @@ import { CircleX } from "lucide-react";
 import { locationSchema } from "@/lib/validation";
 import { set, z } from "zod";
 import { deleteFile, postLocation } from "@/lib/locations";
+import { API_KEY } from "@/lib/config";
 
 interface GeocoderProps {
   accessToken: string;
@@ -159,7 +160,7 @@ const PostLocationForm = () => {
         <div className="grid w-full items-center gap-1.5">
           <Label>Search for your address</Label>
           <Geocoder
-            accessToken="pk.eyJ1IjoiOWxvcmlhIiwiYSI6ImNtNDk0Z3lsODA2aWoybXE0eTMxc2Z4cDkifQ.mXmfJI17bHF8aXJ7fqsevQ"
+            accessToken={API_KEY}
             options={{
               language: "en",
               country: "CA",

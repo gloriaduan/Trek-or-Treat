@@ -6,9 +6,18 @@ import prisma from "./db";
 import { utapi } from "@/app/api/uploadthing/uploadthing";
 
 export const deleteFile = async (key: string) => {
+  const user = await currentUser();
+
   if (!key) {
     return {
       error: "File key required.",
+      status: "ERROR",
+    };
+  }
+
+  if (!user) {
+    return {
+      error: "Not authenticated.",
       status: "ERROR",
     };
   }

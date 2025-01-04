@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Map, { Marker } from "react-map-gl";
 import MapModal from "./MapModal";
+import { API_KEY } from "@/lib/config";
 // import {
 //   Dialog,
 //   DialogContent,
@@ -41,7 +42,7 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
   return (
     <>
       <Map
-        mapboxAccessToken="pk.eyJ1IjoiOWxvcmlhIiwiYSI6ImNtNDk0Z3lsODA2aWoybXE0eTMxc2Z4cDkifQ.mXmfJI17bHF8aXJ7fqsevQ"
+        mapboxAccessToken={API_KEY}
         initialViewState={{
           longitude: -79.62275045355916,
           latitude: 43.5870256842269,

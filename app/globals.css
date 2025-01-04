@@ -202,3 +202,7 @@ mapbox-geocoder input {
 .directions-bar label {
   @apply text-white;
 }
+
+.directions-bar input {
+  @apply text-black;
+}
