@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 interface CustomLocation {
   id: string;
@@ -13,12 +14,14 @@ interface LocationStore {
   removeDestination: (id: string) => void;
 }
 
-export const useLocationStore = create<LocationStore>((set) => ({
-  locations: [],
-  addDestination: (location) =>
-    set((state) => ({ locations: [...state.locations, location] })),
-  removeDestination: (id) =>
-    set((state) => ({
-      locations: state.locations.filter((location) => location.id !== id),
-    })),
-}));
+export const useLocationStore = create<LocationStore>()(
+  devtools((set) => ({
+    locations: [],
+    addDestination: (location) =>
+      set((state) => ({ locations: [...state.locations, location] })),
+    removeDestination: (id) =>
+      set((state) => ({
+        locations: state.locations.filter((location) => location.id !== id),
+      })),
+  }))
+);
