@@ -1,5 +1,5 @@
 ## About the Project
-Hauntmap is a personal project inspired by wanting to make trick-or-treating easier and more convinient in my community. During Halloween, the decorated halloween houses that offer trick-or-treating is very sparse which prompted the creation of this web application that allows people to post their decorated houses on a map and users will be able to select destinations and create a trick-or-treating route. 
+Hauntmap is a personal project inspired by wanting to make trick-or-treating easier and more convinient in my community. During Halloween in my community, the decorated halloween houses that offer trick-or-treating is very sparse which prompted the creation of this web application that allows people to post their decorated houses on a map and users will be able to select destinations and create a trick-or-treating route. 
 
 ### Key Features:
 - **User Authentication**: Secure user registration and login functionality powered by Clerk, ensuring only authenticated users can create or save content.
