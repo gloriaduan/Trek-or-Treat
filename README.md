@@ -13,6 +13,8 @@ Hauntmap is a personal project inspired by wanting to make trick-or-treating eas
 - **Third-party APIs**: Mapbox
 - **Authentication**: Clerk
 
+*This project is currently in progress!*
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
