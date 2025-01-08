@@ -5,7 +5,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
 import { API_KEY } from "@/lib/config";
 import { Input } from "./ui/input";
-import { useLocationStore } from "@/store/app-store";
+import {
+  useGeoJsonStore,
+  useLayerStore,
+  useLocationStore,
+} from "@/store/app-store";
+import type { Feature } from "geojson";
+import { LineLayerSpecification } from "mapbox-gl";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -14,8 +20,12 @@ const AddressAutofill = dynamic(
 
 function DirectionsBar() {
   const [value, setValue] = React.useState("");
+  const addGeoJson = useGeoJsonStore((state) => state.addGeoJson);
+  const addLayer = useLayerStore((state) => state.addLayer);
 
-  const handleChange = (e) => {
+  const handleChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setValue(e.target.value);
   };
 
@@ -31,12 +41,45 @@ function DirectionsBar() {
       locations.forEach((location) => {
         destinationStrs += `${location.longitude},${location.latitude};`;
       });
-      console.log(destinationStrs);
+      // console.log(destinationStrs);
       const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/walking/${destinationStrs}?steps=true&geometries=geojson&access_token=${API_KEY}`,
+        `https://api.mapbox.com/directions/v5/mapbox/walking/${destinationStrs.substring(
+          0,
+          destinationStrs.length - 1
+        )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
         { method: "GET" }
       );
-      const json = await res.json();
+      const data = await res.json();
+      const routeCoords = data.routes[0].geometry.coordinates;
+
+      const geojson: Feature = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: routeCoords,
+        },
+      };
+
+      addGeoJson(geojson);
+
+      const routeLayer: LineLayerSpecification = {
+        id: "route",
+        type: "line",
+        source: "geojson",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": "#eb6028",
+          "line-width": 5,
+          "line-opacity": 0.75,
+        },
+      };
+
+      addLayer(routeLayer);
+      // console.log(routeCoords);
     } else {
       alert("Please enter a starting point and at least one destination");
     }

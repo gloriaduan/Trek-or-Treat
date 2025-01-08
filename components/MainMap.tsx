@@ -3,9 +3,10 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Map, { Marker } from "react-map-gl";
+import Map, { Layer, Marker, Source } from "react-map-gl";
 import MapModal from "./MapModal";
 import { API_KEY } from "@/lib/config";
+import { useGeoJsonStore, useLayerStore } from "@/store/app-store";
 // import {
 //   Dialog,
 //   DialogContent,
@@ -32,6 +33,12 @@ interface MainMapProps {
 const MainMap = ({ locations = [] }: MainMapProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currLocation, setCurrLocation] = useState({} as CustomLocation);
+  const layer = useLayerStore((state) => state.layer);
+  const geojson = useGeoJsonStore((state) => state.geojson);
+
+  useEffect(() => {
+    console.log(layer, geojson);
+  }, []);
 
   const handleMarkerClick = (location: CustomLocation) => {
     // console.log(location.address);
@@ -70,6 +77,14 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
             />
           </Marker>
         ))}
+        {layer &&
+          geojson &&
+          Object.keys(geojson).length > 0 &&
+          Object.keys(layer).length > 0 && (
+            <Source type="geojson" data={geojson}>
+              <Layer {...layer} />
+            </Source>
+          )}
       </Map>
       <MapModal
         isOpen={isOpen}
