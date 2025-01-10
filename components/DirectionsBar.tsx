@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
@@ -9,6 +9,7 @@ import {
   useGeoJsonStore,
   useLayerStore,
   useLocationStore,
+  useStartStore,
 } from "@/store/app-store";
 import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
@@ -19,9 +20,10 @@ const AddressAutofill = dynamic(
 );
 
 function DirectionsBar() {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = useState("");
   const addGeoJson = useGeoJsonStore((state) => state.addGeoJson);
   const addLayer = useLayerStore((state) => state.addLayer);
+  const addStart = useStartStore((state) => state.addStart);
 
   const handleChange = (e: {
     target: { value: React.SetStateAction<string> };
@@ -33,6 +35,14 @@ function DirectionsBar() {
 
   const handleAutofillRetrieve = async (res: any) => {
     console.log(res);
+    const destination = {
+      id: res.features[0].properties.id,
+      address: res.features[0].properties.place_name,
+      longitude: res.features[0].geometry.coordinates[0],
+      latitude: res.features[0].geometry.coordinates[1],
+    };
+    setValue(res.features[0].properties.place_name);
+    addStart(destination);
   };
 
   const routeSubmit = async () => {

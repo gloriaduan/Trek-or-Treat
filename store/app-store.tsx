@@ -16,6 +16,12 @@ interface LocationStore {
   removeDestination: (id: string) => void;
 }
 
+interface StartStore {
+  start: CustomLocation | {};
+  addStart: (location: CustomLocation) => void;
+  removeStart: () => void;
+}
+
 interface GeoJsonStore {
   geojson: Feature;
   addGeoJson: (object: Feature) => void;
@@ -49,5 +55,13 @@ export const useLayerStore = create<LayerStore>()(
   devtools((set) => ({
     layer: {},
     addLayer: (object) => set({ layer: object }),
+  }))
+);
+
+export const useStartStore = create<StartStore>()(
+  devtools((set) => ({
+    start: {},
+    addStart: (location) => set({ start: location }),
+    removeStart: () => set({ start: {} }),
   }))
 );
