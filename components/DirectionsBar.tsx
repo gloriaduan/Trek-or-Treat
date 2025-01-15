@@ -21,9 +21,11 @@ const AddressAutofill = dynamic(
 
 function DirectionsBar() {
   const [value, setValue] = useState("");
+  const [error, setError] = useState("");
   const addGeoJson = useGeoJsonStore((state) => state.addGeoJson);
   const addLayer = useLayerStore((state) => state.addLayer);
   const addStart = useStartStore((state) => state.addStart);
+  const start = useStartStore((state) => state.start);
 
   const handleChange = (e: {
     target: { value: React.SetStateAction<string> };
@@ -46,14 +48,15 @@ function DirectionsBar() {
   };
 
   const routeSubmit = async () => {
-    if (locations.length > 0) {
+    if (locations.length > 1 && Object.keys(start).length > 0) {
       let destinationStrs = "";
+      let startStr = `${start.longitude},${start.latitude};`;
       locations.forEach((location) => {
         destinationStrs += `${location.longitude},${location.latitude};`;
       });
-      // console.log(destinationStrs);
+
       const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/walking/${destinationStrs.substring(
+        `https://api.mapbox.com/directions/v5/mapbox/walking/${startStr}${destinationStrs.substring(
           0,
           destinationStrs.length - 1
         )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
@@ -91,7 +94,7 @@ function DirectionsBar() {
       addLayer(routeLayer);
       // console.log(routeCoords);
     } else {
-      alert("Please enter a starting point and at least one destination");
+      setError("Please enter a starting point and at least one destination.");
     }
   };
 
@@ -115,6 +118,14 @@ function DirectionsBar() {
               onChange={handleChange}
             />
           </AddressAutofill>
+          {Object.keys(locations).length == 0 && (
+            <p className="text-white/50">
+              <span>
+                <small>Enter an address or select a pin</small>
+              </span>
+            </p>
+          )}
+          {error && <p className="text-white/50">{error}</p>}
           {locations &&
             locations.map((location, i) => (
               <p className="text-white" key={i}>

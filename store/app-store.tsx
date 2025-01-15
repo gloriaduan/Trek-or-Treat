@@ -4,10 +4,10 @@ import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
 
 interface CustomLocation {
-  id: string;
-  address: string;
-  longitude: number;
-  latitude: number;
+  id?: string;
+  address?: string;
+  longitude?: number;
+  latitude?: number;
 }
 
 interface LocationStore {
@@ -17,7 +17,7 @@ interface LocationStore {
 }
 
 interface StartStore {
-  start: CustomLocation | {};
+  start: CustomLocation;
   addStart: (location: CustomLocation) => void;
   removeStart: () => void;
 }

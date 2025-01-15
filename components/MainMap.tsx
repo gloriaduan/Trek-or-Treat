@@ -6,7 +6,11 @@ import React, { useEffect, useState } from "react";
 import Map, { Layer, Marker, Source } from "react-map-gl";
 import MapModal from "./MapModal";
 import { API_KEY } from "@/lib/config";
-import { useGeoJsonStore, useLayerStore } from "@/store/app-store";
+import {
+  useGeoJsonStore,
+  useLayerStore,
+  useStartStore,
+} from "@/store/app-store";
 // import {
 //   Dialog,
 //   DialogContent,
@@ -35,6 +39,7 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
   const [currLocation, setCurrLocation] = useState({} as CustomLocation);
   const layer = useLayerStore((state) => state.layer);
   const geojson = useGeoJsonStore((state) => state.geojson);
+  const start = useStartStore((state) => state.start);
 
   useEffect(() => {
     console.log(layer, geojson);
@@ -77,6 +82,22 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
             />
           </Marker>
         ))}
+        {start && (
+          <Marker
+            key={start.id}
+            longitude={start.longitude || 0}
+            latitude={start.latitude || 0}
+            color="orange"
+            anchor="bottom"
+          >
+            <Image
+              src="/start-pin.png"
+              width={20}
+              height={20}
+              alt={start.address || "Start address"}
+            />
+          </Marker>
+        )}
         {layer &&
           geojson &&
           Object.keys(geojson).length > 0 &&
