@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useLocationStore } from "@/store/app-store";
+import { useLocationStore, useStartStore } from "@/store/app-store";
 
 interface CustomLocation {
   id: string;
@@ -25,7 +25,24 @@ interface MapModalProps {
 }
 
 function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
+  const start = useStartStore((state) => state.start);
+  const addStart = useStartStore((state) => state.addStart);
   const addDestination = useLocationStore((state) => state.addDestination);
+
+  const handleAddDestination = () => {
+    const destination = {
+      id: currLocation.id,
+      address: currLocation.address,
+      longitude: currLocation.longitude,
+      latitude: currLocation.latitude,
+    };
+
+    if (Object.keys(start).length == 0) {
+      addStart(destination);
+    } else {
+      addDestination(destination);
+    }
+  };
 
   return (
     <Dialog
@@ -38,17 +55,7 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
         <DialogHeader>
           <DialogTitle>{currLocation.address}</DialogTitle>
           <DialogDescription>{currLocation.description}</DialogDescription>
-          <button
-            className="btn-primary"
-            onClick={() => {
-              addDestination({
-                id: currLocation.id,
-                address: currLocation.address,
-                longitude: currLocation.longitude,
-                latitude: currLocation.latitude,
-              });
-            }}
-          >
+          <button className="btn-primary" onClick={handleAddDestination}>
             Add Destination
           </button>
         </DialogHeader>

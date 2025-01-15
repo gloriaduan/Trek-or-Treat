@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
@@ -26,6 +26,10 @@ function DirectionsBar() {
   const addLayer = useLayerStore((state) => state.addLayer);
   const addStart = useStartStore((state) => state.addStart);
   const start = useStartStore((state) => state.start);
+
+  useEffect(() => {
+    setValue(start.address || "");
+  }, [start]);
 
   const handleChange = (e: {
     target: { value: React.SetStateAction<string> };
