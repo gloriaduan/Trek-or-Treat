@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -67,35 +68,38 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
       }}
     >
       <DialogContent>
+        <div className="embla pt-6" ref={emblaRef}>
+          <div className="embla__container">
+            {isOpen &&
+              currLocation.images.map((image, index) => (
+                <div key={index} className="embla__slide relative h-60">
+                  <Image
+                    alt="image"
+                    fill={true}
+                    sizes="100vw"
+                    src={`${image}`}
+                    className="rounded-lg"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              ))}
+          </div>
+          <button className="embla__prev" onClick={scrollPrev}>
+            Prev
+          </button>
+          <button className="embla__next" onClick={scrollNext}>
+            Next
+          </button>
+        </div>
         <DialogHeader>
           <DialogTitle>{currLocation.address}</DialogTitle>
-          <DialogDescription>{currLocation.description}</DialogDescription>
-          <div className="embla p-5" ref={emblaRef}>
-            <div className="embla__container">
-              {isOpen &&
-                currLocation.images.map((image, index) => (
-                  <div key={index} className="embla__slide">
-                    <Image
-                      alt="image"
-                      width={"auto"}
-                      height={"auto"}
-                      sizes="100vw"
-                      src={`${image}`}
-                    />
-                  </div>
-                ))}
-            </div>
-            <button className="embla__prev" onClick={scrollPrev}>
-              Prev
-            </button>
-            <button className="embla__next" onClick={scrollNext}>
-              Next
-            </button>
-          </div>
+        </DialogHeader>
+        <DialogDescription>{currLocation.description}</DialogDescription>
+        <DialogFooter>
           <button className="btn-primary" onClick={handleAddDestination}>
             Add Destination
           </button>
-        </DialogHeader>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
