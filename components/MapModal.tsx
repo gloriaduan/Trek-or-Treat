@@ -12,6 +12,7 @@ import {
 import { useLocationStore, useStartStore } from "@/store/app-store";
 
 import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useCallback } from "react";
 
@@ -68,7 +69,7 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
       }}
     >
       <DialogContent>
-        <div className="embla pt-6" ref={emblaRef}>
+        <div className="embla pt-6 relative" ref={emblaRef}>
           <div className="embla__container">
             {isOpen &&
               currLocation.images.map((image, index) => (
@@ -84,11 +85,17 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
                 </div>
               ))}
           </div>
-          <button className="embla__prev" onClick={scrollPrev}>
-            Prev
+          <button
+            className="embla__prev absolute left-0 top-2/4"
+            onClick={scrollPrev}
+          >
+            <ChevronLeft color="white" />
           </button>
-          <button className="embla__next" onClick={scrollNext}>
-            Next
+          <button
+            className="embla__next absolute right-0 top-2/4"
+            onClick={scrollNext}
+          >
+            <ChevronRight color="white" />
           </button>
         </div>
         <DialogHeader>
