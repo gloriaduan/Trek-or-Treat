@@ -12,9 +12,10 @@ import {
 import { useLocationStore, useStartStore } from "@/store/app-store";
 
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { StarRating } from "./StarRating";
 
 interface CustomLocation {
   id: string;
@@ -37,6 +38,8 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
   const addStart = useStartStore((state) => state.addStart);
   const addDestination = useLocationStore((state) => state.addDestination);
   const [emblaRef, emblaApi] = useEmblaCarousel();
+
+  const [rating, setRating] = useState(0);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -102,7 +105,13 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
           <DialogTitle>{currLocation.address}</DialogTitle>
         </DialogHeader>
         <DialogDescription>{currLocation.description}</DialogDescription>
-        <DialogFooter>
+        <div className="mb-7">
+          <StarRating
+            initialRating={rating}
+            onChange={(rating) => setRating(rating)}
+          />
+        </div>
+        <DialogFooter className="sm:justify-stretch sm:flex-col">
           <button className="btn-primary" onClick={handleAddDestination}>
             Add Destination
           </button>
