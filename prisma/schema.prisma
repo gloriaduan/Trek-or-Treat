@@ -8,19 +8,36 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  clerkUserId String   @unique
-  username    String   @unique
+  id          String     @id @default(cuid())
+  clerkUserId String     @unique
+  username    String     @unique
   avatar      String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
+  ratings     Rating[]
+  posts       Location[]
 }
 
 model Location {
   id          String   @id @default(cuid())
+  userId      String
   address     String
   description String
   latitude    Float
   longitude   Float
   images      String[]
   createdAt   DateTime @default(now())
+  ratings     Rating[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Rating {
+  id         String   @id @default(cuid())
+  userId     String
+  locationId String
+  value      Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  location Location @relation(fields: [locationId], references: [id])
 }

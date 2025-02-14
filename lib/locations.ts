@@ -53,6 +53,7 @@ export const postLocation = async (data: any) => {
 
     const location = await prisma.location.create({
       data: {
+        userId: user.id,
         address: data.address,
         description: data.description,
         latitude: data.latitude,
@@ -76,10 +77,78 @@ export const postLocation = async (data: any) => {
 
 export const getLocations = async () => {
   try {
-    const locations = await prisma.location.findMany();
+    const locations = await prisma.location.findMany({
+      include: {
+        ratings: {
+          select: {
+            value: true,
+          },
+        },
+      },
+    });
+
+    const locationsWithAvgRating = locations.map((location) => {
+      const avgRating =
+        location.ratings.length > 0
+          ? location.ratings.reduce((sum, rating) => sum + rating.value, 0) /
+            location.ratings.length
+          : 0;
+
+      return { ...location, avgRating };
+    });
 
     return {
-      locations,
+      locationsWithAvgRating,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};
+
+export const submitRating = async (data: any) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: "Not authenticated.",
+      status: "ERROR",
+    };
+  }
+
+  try {
+    const existingRating = await prisma.rating.findFirst({
+      where: {
+        userId: user.id,
+        locationId: data.locationId,
+      },
+    });
+
+    let rating;
+
+    if (existingRating) {
+      // Update existing rating
+      rating = await prisma.rating.update({
+        where: { id: existingRating.id },
+        data: { value: data.rating },
+      });
+    } else {
+      // Create a new rating
+      rating = await prisma.rating.create({
+        data: {
+          userId: user.id,
+          locationId: data.locationId,
+          value: data.rating,
+        },
+      });
+    }
+
+    return {
+      rating,
       status: "SUCCESS",
     };
   } catch (error) {
