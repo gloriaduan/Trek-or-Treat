@@ -12,6 +12,7 @@ import { locationSchema } from "@/lib/validation";
 import { set, z } from "zod";
 import { deleteFile, postLocation } from "@/lib/locations";
 import { API_KEY } from "@/lib/config";
+import { useRouter } from "next/navigation";
 
 interface GeocoderProps {
   accessToken: string;
@@ -50,6 +51,7 @@ const PostLocationForm = () => {
   const [images, setImages] = useState<
     { key: string; name: string; url: string }[]
   >([]);
+  const router = useRouter();
 
   const handleSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -75,7 +77,8 @@ const PostLocationForm = () => {
         setLatitude(0);
         setAddress("");
         setImages([]);
-        return response;
+        router.push("/");
+        // return response;
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

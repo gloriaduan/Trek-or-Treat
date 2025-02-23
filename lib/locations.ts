@@ -47,6 +47,8 @@ export const postLocation = async (data: any) => {
   }
 
   try {
+    console.log(`User ID: ${user.id}`);
+
     const postImages = data.images.map((image: any) => {
       return image.url;
     });
@@ -131,13 +133,11 @@ export const submitRating = async (data: any) => {
     let rating;
 
     if (existingRating) {
-      // Update existing rating
       rating = await prisma.rating.update({
         where: { id: existingRating.id },
         data: { value: data.rating },
       });
     } else {
-      // Create a new rating
       rating = await prisma.rating.create({
         data: {
           userId: user.id,
