@@ -223,3 +223,14 @@ mapbox-geocoder input {
 .embla__slide:not(:last-child) {
   margin-right: 20px;
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

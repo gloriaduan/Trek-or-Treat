@@ -104,10 +104,13 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
         <DialogHeader>
           <DialogTitle>{currLocation.address}</DialogTitle>
         </DialogHeader>
-        <DialogDescription>{currLocation.description}</DialogDescription>
-        <div className="mb-7">
+        <DialogDescription className="mb-5">
+          {currLocation.description}
+        </DialogDescription>
+        <div className="mb-5">
           <StarRating
             initialRating={rating}
+            locationId={currLocation.id}
             onChange={(rating) => setRating(rating)}
           />
         </div>

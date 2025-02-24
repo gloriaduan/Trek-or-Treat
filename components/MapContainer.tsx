@@ -5,7 +5,6 @@ export const revalidate = 5;
 
 async function MapContainer() {
   const locations = await getLocations();
-  console.log(locations);
 
   return (
     <>

@@ -140,9 +140,13 @@ export const submitRating = async (data: any) => {
     } else {
       rating = await prisma.rating.create({
         data: {
-          userId: user.id,
-          locationId: data.locationId,
           value: data.rating,
+          user: {
+            connect: { id: user.id },
+          },
+          location: {
+            connect: { id: data.locationId },
+          },
         },
       });
     }
