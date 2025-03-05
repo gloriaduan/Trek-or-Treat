@@ -24,6 +24,7 @@ interface CustomLocation {
   id: string;
   address: string;
   longitude: number;
+  avgRating: number;
   latitude: number;
   description: string;
   images: string[];

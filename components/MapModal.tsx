@@ -20,6 +20,7 @@ import { StarRating } from "./StarRating";
 interface CustomLocation {
   id: string;
   address: string;
+  avgRating: number;
   longitude: number;
   latitude: number;
   description: string;
@@ -38,6 +39,8 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
   const addStart = useStartStore((state) => state.addStart);
   const addDestination = useLocationStore((state) => state.addDestination);
   const [emblaRef, emblaApi] = useEmblaCarousel();
+
+  console.log(currLocation);
 
   const [rating, setRating] = useState(0);
 
@@ -102,7 +105,13 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
           </button>
         </div>
         <DialogHeader>
-          <DialogTitle>{currLocation.address}</DialogTitle>
+          <DialogTitle className="mb-2">{currLocation.address}</DialogTitle>
+          <div className="flex items-center">
+            <Star className="fill-current text-primary" />
+            <p className="ml-2 text-primary">
+              {currLocation.avgRating?.toFixed(1)}
+            </p>
+          </div>
         </DialogHeader>
         <DialogDescription className="mb-5">
           {currLocation.description}

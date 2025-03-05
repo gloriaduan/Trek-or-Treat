@@ -19,6 +19,7 @@ export function StarRating({
 }: StarRatingProps) {
   const [rating, setRating] = useState(initialRating);
   const [hover, setHover] = useState(0);
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const handleRating = (currentRating: number) => {
     if (currentRating === rating) {
@@ -36,15 +37,18 @@ export function StarRating({
   };
 
   const handleSubmitRating = async () => {
-    const response = await submitRating({
-      rating: rating,
-      locationId: locationId,
-    });
+    setSubmitMessage("Submitting rating...");
+    try {
+      const response = await submitRating({
+        rating: rating,
+        locationId: locationId,
+      });
 
-    if (response.status === "SUCCESS") {
-      console.log("Rating submitted successfully");
-    } else {
-      console.log(`Error occurred: ${response.error}`);
+      if (response.status === "SUCCESS") {
+        setSubmitMessage("Rating submitted successfully.");
+      }
+    } catch (error) {
+      console.log(`Error occurred: ${error}`);
     }
   };
 
@@ -87,6 +91,7 @@ export function StarRating({
         >
           Submit Rating
         </Button>
+        <p className="text-xs text-muted-foreground">{submitMessage}</p>
       </div>
     </>
   );
