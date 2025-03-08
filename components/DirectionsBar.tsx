@@ -13,6 +13,7 @@ import {
 } from "@/store/app-store";
 import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
+import TransportationModeSelector from "./TransportationModeSelector";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -22,10 +23,14 @@ const AddressAutofill = dynamic(
 function DirectionsBar() {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+  const [steps, setSteps] = useState<{ maneuver: { instruction: string } }[]>(
+    []
+  );
   const addGeoJson = useGeoJsonStore((state) => state.addGeoJson);
   const addLayer = useLayerStore((state) => state.addLayer);
   const addStart = useStartStore((state) => state.addStart);
   const start = useStartStore((state) => state.start);
+  const profile = useLocationStore((state) => state.profile);
 
   useEffect(() => {
     setValue(start.address || "");
@@ -52,7 +57,8 @@ function DirectionsBar() {
   };
 
   const routeSubmit = async () => {
-    if (locations.length > 1 && Object.keys(start).length > 0) {
+    if (locations.length >= 1 && Object.keys(start).length > 0) {
+      setError("");
       let destinationStrs = "";
       let startStr = `${start.longitude},${start.latitude};`;
       locations.forEach((location) => {
@@ -60,14 +66,23 @@ function DirectionsBar() {
       });
 
       const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/walking/${startStr}${destinationStrs.substring(
+        `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startStr}${destinationStrs.substring(
           0,
           destinationStrs.length - 1
         )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
         { method: "GET" }
       );
       const data = await res.json();
+      console.log(data);
       const routeCoords = data.routes[0].geometry.coordinates;
+      const routeSteps = data.routes[0].legs;
+
+      for (let leg in routeSteps) {
+        for (let step in routeSteps[leg].steps) {
+          setSteps((prev) => [...prev, routeSteps[leg].steps[step]]);
+          // console.log(routeSteps[leg].steps[step].maneuver.instruction);
+        }
+      }
 
       const geojson: Feature = {
         type: "Feature",
@@ -96,16 +111,15 @@ function DirectionsBar() {
       };
 
       addLayer(routeLayer);
-      // console.log(routeCoords);
     } else {
       setError("Please enter a starting point and at least one destination.");
     }
   };
 
   return (
-    <aside className="directions-bar bg-black md:max-w-xs w-full md:h-full-height h-52 p-3 md:py-10 md:px-5">
+    <aside className="directions-bar bg-black md:max-w-sm w-full md:h-full-height h-52 p-3 md:py-10 md:px-5">
       <ScrollArea className="h-full rounded-md p-3">
-        <div className="grid w-full items-center gap-3">
+        <div className="grid w-full items-center gap-3 mb-5">
           <AddressAutofill
             accessToken={`${API_KEY}`}
             onRetrieve={(res) => {
@@ -122,6 +136,9 @@ function DirectionsBar() {
               onChange={handleChange}
             />
           </AddressAutofill>
+          <TransportationModeSelector
+            onModeChange={(mode) => console.log(`Selected mode: ${mode}`)}
+          />
           {Object.keys(locations).length == 0 && (
             <p className="text-white/50">
               <span>
@@ -132,13 +149,34 @@ function DirectionsBar() {
           {error && <p className="text-white/50">{error}</p>}
           {locations &&
             locations.map((location, i) => (
-              <p className="text-white" key={i}>
+              <p className="text-muted" key={i}>
                 {location.address}
               </p>
             ))}
           <button className="btn-primary" onClick={routeSubmit}>
             Get Route
           </button>
+        </div>
+        <div className="directions">
+          <h3 className="mb-2 text-white">Directions</h3>
+          <ol className="text-white flex flex-col gap-3">
+            {steps.map((step, i) => {
+              const instruction = step.maneuver.instruction;
+
+              return (
+                <li
+                  className={`p-2  rounded-md ${
+                    instruction.includes("destination")
+                      ? "bg-white/90 text-black"
+                      : "bg-white/5 text-muted"
+                  }`}
+                  key={i}
+                >
+                  {step.maneuver.instruction}
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </ScrollArea>
     </aside>

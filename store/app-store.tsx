@@ -12,8 +12,10 @@ interface CustomLocation {
 
 interface LocationStore {
   locations: CustomLocation[];
+  profile: string;
   addDestination: (location: CustomLocation) => void;
   removeDestination: (id: string) => void;
+  setProfile: (profile: string) => void;
 }
 
 interface StartStore {
@@ -35,12 +37,14 @@ interface LayerStore {
 export const useLocationStore = create<LocationStore>()(
   devtools((set) => ({
     locations: [],
+    profile: "driving",
     addDestination: (location) =>
       set((state) => ({ locations: [...state.locations, location] })),
     removeDestination: (id) =>
       set((state) => ({
         locations: state.locations.filter((location) => location.id !== id),
       })),
+    setProfile: (profile: string) => set({ profile }),
   }))
 );
 

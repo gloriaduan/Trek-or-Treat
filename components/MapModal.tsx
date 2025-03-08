@@ -40,8 +40,6 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
   const addDestination = useLocationStore((state) => state.addDestination);
   const [emblaRef, emblaApi] = useEmblaCarousel();
 
-  console.log(currLocation);
-
   const [rating, setRating] = useState(0);
 
   const scrollPrev = useCallback(() => {
