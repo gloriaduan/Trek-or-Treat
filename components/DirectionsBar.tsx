@@ -23,6 +23,7 @@ const AddressAutofill = dynamic(
 function DirectionsBar() {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+  const [canSave, setCanSave] = useState(false);
   const [steps, setSteps] = useState<{ maneuver: { instruction: string } }[]>(
     []
   );
@@ -31,6 +32,7 @@ function DirectionsBar() {
   const addStart = useStartStore((state) => state.addStart);
   const start = useStartStore((state) => state.start);
   const profile = useLocationStore((state) => state.profile);
+  const locations = useLocationStore((state) => state.locations);
 
   useEffect(() => {
     setValue(start.address || "");
@@ -41,8 +43,6 @@ function DirectionsBar() {
   }) => {
     setValue(e.target.value);
   };
-
-  const locations = useLocationStore((state) => state.locations);
 
   const handleAutofillRetrieve = async (res: any) => {
     console.log(res);
@@ -65,52 +65,57 @@ function DirectionsBar() {
         destinationStrs += `${location.longitude},${location.latitude};`;
       });
 
-      const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startStr}${destinationStrs.substring(
-          0,
-          destinationStrs.length - 1
-        )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
-        { method: "GET" }
-      );
-      const data = await res.json();
-      console.log(data);
-      const routeCoords = data.routes[0].geometry.coordinates;
-      const routeSteps = data.routes[0].legs;
+      try {
+        const res = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startStr}${destinationStrs.substring(
+            0,
+            destinationStrs.length - 1
+          )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
+          { method: "GET" }
+        );
+        const data = await res.json();
+        console.log(data);
+        const routeCoords = data.routes[0].geometry.coordinates;
+        const routeSteps = data.routes[0].legs;
 
-      for (let leg in routeSteps) {
-        for (let step in routeSteps[leg].steps) {
-          setSteps((prev) => [...prev, routeSteps[leg].steps[step]]);
-          // console.log(routeSteps[leg].steps[step].maneuver.instruction);
+        for (let leg in routeSteps) {
+          for (let step in routeSteps[leg].steps) {
+            setSteps((prev) => [...prev, routeSteps[leg].steps[step]]);
+          }
         }
+
+        const geojson: Feature = {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            coordinates: routeCoords,
+          },
+        };
+
+        addGeoJson(geojson);
+
+        const routeLayer: LineLayerSpecification = {
+          id: "route",
+          type: "line",
+          source: "geojson",
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#eb6028",
+            "line-width": 5,
+            "line-opacity": 0.75,
+          },
+        };
+
+        addLayer(routeLayer);
+
+        setCanSave(true);
+      } catch (error) {
+        setError("An error occurred. Please try again.");
       }
-
-      const geojson: Feature = {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: routeCoords,
-        },
-      };
-
-      addGeoJson(geojson);
-
-      const routeLayer: LineLayerSpecification = {
-        id: "route",
-        type: "line",
-        source: "geojson",
-        layout: {
-          "line-join": "round",
-          "line-cap": "round",
-        },
-        paint: {
-          "line-color": "#eb6028",
-          "line-width": 5,
-          "line-opacity": 0.75,
-        },
-      };
-
-      addLayer(routeLayer);
     } else {
       setError("Please enter a starting point and at least one destination.");
     }
@@ -156,27 +161,38 @@ function DirectionsBar() {
           <button className="btn-primary" onClick={routeSubmit}>
             Get Route
           </button>
+          <button
+            className="btn-dark-50"
+            disabled={canSave == false}
+            onClick={routeSubmit}
+          >
+            Save Route
+          </button>
         </div>
         <div className="directions">
-          <h3 className="mb-2 text-white">Directions</h3>
-          <ol className="text-white flex flex-col gap-3">
-            {steps.map((step, i) => {
-              const instruction = step.maneuver.instruction;
+          {steps.length > 0 && (
+            <>
+              <h3 className="mb-2 text-white">Directions</h3>
+              <ol className="text-white flex flex-col gap-3">
+                {steps.map((step, i) => {
+                  const instruction = step.maneuver.instruction;
 
-              return (
-                <li
-                  className={`p-2  rounded-md ${
-                    instruction.includes("destination")
-                      ? "bg-white/90 text-black"
-                      : "bg-white/5 text-muted"
-                  }`}
-                  key={i}
-                >
-                  {step.maneuver.instruction}
-                </li>
-              );
-            })}
-          </ol>
+                  return (
+                    <li
+                      className={`p-2  rounded-md ${
+                        instruction.includes("destination")
+                          ? "bg-white/90 text-black"
+                          : "bg-white/5 text-muted"
+                      }`}
+                      key={i}
+                    >
+                      {step.maneuver.instruction}
+                    </li>
+                  );
+                })}
+              </ol>
+            </>
+          )}
         </div>
       </ScrollArea>
     </aside>

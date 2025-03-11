@@ -21,6 +21,14 @@ html {
     @apply bg-black text-white font-medium px-5 py-2 rounded-lg h-full;
   }
 
+  .btn-dark-50 {
+    @apply bg-white/5 text-white font-medium px-5 py-2 rounded-lg h-full;
+  }
+
+  .btn-dark-50:disabled {
+    @apply text-white/20;
+  }
+
   .light-label label {
     @apply text-white;
   }

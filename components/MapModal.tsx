@@ -12,10 +12,11 @@ import {
 import { useLocationStore, useStartStore } from "@/store/app-store";
 
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Images, Star } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { StarRating } from "./StarRating";
+import { Description } from "@radix-ui/react-dialog";
 
 interface CustomLocation {
   id: string;

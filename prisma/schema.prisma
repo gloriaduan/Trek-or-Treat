@@ -14,18 +14,20 @@ model User {
   createdAt DateTime   @default(now())
   ratings   Rating[]
   posts     Location[]
+  routes    Route[]
 }
 
 model Location {
-  id          String   @id @default(cuid())
+  id          String          @id @default(cuid())
   userId      String
   address     String
   description String
   latitude    Float
   longitude   Float
   images      String[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime        @default(now())
   ratings     Rating[]
+  routeLinks  RouteLocation[]
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -39,4 +41,24 @@ model Rating {
 
   user     User     @relation(fields: [userId], references: [id])
   location Location @relation(fields: [locationId], references: [id])
+}
+
+model Route {
+  id        String          @id @default(cuid())
+  userId    String
+  name      String
+  locations RouteLocation[]
+  createdAt DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model RouteLocation {
+  routeId    String
+  locationId String
+
+  route    Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@id([routeId, locationId])
 }
