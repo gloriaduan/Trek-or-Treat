@@ -23,3 +23,13 @@ export const locationSchema = z.object({
       message: "Must upload at least one image.",
     }),
 });
+
+export const routeSaveSchema = z.object({
+  name: z
+    .string()
+    .min(10, { message: "No title." })
+    .max(250, { message: "Title too long." }),
+  description: z
+    .string()
+    .max(300, { message: "Description is too long." }),
+})

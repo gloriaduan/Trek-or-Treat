@@ -6,6 +6,8 @@ import prisma from "./db";
 export const addRoute = async (data: any) => {
   const user = await currentUser();
 
+  console.log(data.locations)
+
   if (!user) {
     return {
       error: "Not authenticated.",

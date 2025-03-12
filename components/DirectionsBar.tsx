@@ -14,6 +14,7 @@ import {
 import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
 import TransportationModeSelector from "./TransportationModeSelector";
+import SaveModal from "./SaveModal";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -27,6 +28,7 @@ function DirectionsBar() {
   const [steps, setSteps] = useState<{ maneuver: { instruction: string } }[]>(
     []
   );
+  const [isOpen, setIsOpen] = useState(false);
   const addGeoJson = useGeoJsonStore((state) => state.addGeoJson);
   const addLayer = useLayerStore((state) => state.addLayer);
   const addStart = useStartStore((state) => state.addStart);
@@ -121,6 +123,11 @@ function DirectionsBar() {
     }
   };
 
+  const openSaveModal = () => {
+    console.log("open save modal");
+    setIsOpen(true);
+  };
+
   return (
     <aside className="directions-bar bg-black md:max-w-sm w-full md:h-full-height h-52 p-3 md:py-10 md:px-5">
       <ScrollArea className="h-full rounded-md p-3">
@@ -164,7 +171,7 @@ function DirectionsBar() {
           <button
             className="btn-dark-50"
             disabled={canSave == false}
-            onClick={routeSubmit}
+            onClick={openSaveModal}
           >
             Save Route
           </button>
@@ -195,6 +202,7 @@ function DirectionsBar() {
           )}
         </div>
       </ScrollArea>
+      <SaveModal isOpen={isOpen} setIsOpen={setIsOpen} />
     </aside>
   );
 }
