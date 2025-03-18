@@ -6,7 +6,7 @@ import prisma from "./db";
 export const addRoute = async (data: any) => {
   const user = await currentUser();
 
-  console.log(data.locations)
+  console.log(data);
 
   if (!user) {
     return {
@@ -20,6 +20,7 @@ export const addRoute = async (data: any) => {
       data: {
         userId: user.id,
         name: data.name,
+        description: data.description,
         locations: {
           create: data.locations.map((location: any) => ({
             location: { connect: { id: location.id } },
@@ -30,6 +31,33 @@ export const addRoute = async (data: any) => {
 
     return {
       newRoute,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};
+
+export const getRoutes = async () => {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: "Not authenticated.",
+      status: "ERROR",
+    };
+  }
+
+  try {
+    const routes = await prisma.route.findMany({ where: { userId: user.id } });
+
+    return {
+      routes,
       status: "SUCCESS",
     };
   } catch (error) {

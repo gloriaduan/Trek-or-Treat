@@ -73,6 +73,11 @@ async function Navbar() {
                         Post a Location
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/saved" className="w-full">
+                        Saved Routes
+                      </Link>
+                    </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>

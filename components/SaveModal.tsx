@@ -47,6 +47,8 @@ function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
       if (response.status === "SUCCESS") {
         console.log("Route saved successfully.");
         setErrors({});
+      } else {
+        setErrors({ general: "Please log in to save routes." });
       }
     } catch (error) {
       console.log(error);
@@ -83,27 +85,28 @@ function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
-                placeholder="My Route"
-                className="col-span-3"
-              />
-              {errors.name && <p className="form-error">{errors.name}</p>}
+              <div className="col-span-3">
+                <Input id="title" name="title" placeholder="My Route" />
+                {errors.name && <p className="form-error">{errors.name}</p>}
+              </div>
             </div>
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                placeholder="More information..."
-                className="col-span-3"
-                id="description"
-                name="description"
-              />
-              {errors.description && (
-                <p className="form-error">{errors.description}</p>
-              )}
+              <div className="col-span-3">
+                <Textarea
+                  placeholder="More information..."
+                  id="description"
+                  name="description"
+                />
+                {errors.description && (
+                  <p className="form-error">{errors.description}</p>
+                )}
+              </div>
             </div>
           </div>
+          {errors.general && (
+            <p className="form-error mb-3 text-sm">{errors.general}</p>
+          )}
           <DialogFooter className="sm:justify-stretch sm:flex-col">
             <button className="btn-primary" disabled={isPending ? true : false}>
               {isPending ? "Submitting..." : "Submit"}

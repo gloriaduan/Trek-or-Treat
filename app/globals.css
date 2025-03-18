@@ -36,6 +36,10 @@ html {
   .h-full-height {
     height: calc(100vh - 74px);
   }
+
+  .form-error {
+    @apply text-primary;
+  }
 }
 
 @layer base {
