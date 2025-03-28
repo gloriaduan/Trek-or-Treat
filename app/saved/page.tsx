@@ -1,6 +1,8 @@
 import RouteCard from "@/components/RouteCard";
+import { getLocation } from "@/lib/locations";
+import { getRoutes } from "@/lib/route";
 
-const routes = [
+const routes_arr = [
   {
     id: "1",
     title: "Morning Jog Route",
@@ -24,21 +26,28 @@ const routes = [
   },
 ];
 
-function Page() {
+async function Page() {
+  const res = await getRoutes();
+  console.log(res);
+
   return (
     <div className="py-16">
       <div className="container">
         <h1 className="mb-6 text-3xl font-bold">Saved Routes</h1>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routes.map((route) => (
-            <RouteCard
-              key={route.id}
-              id={route.id}
-              title={route.title}
-              description={route.description}
-              date={route.date}
-            />
-          ))}
+          {res.routes?.map((route) => {
+            return (
+              <RouteCard
+                key={route.id}
+                id={route.id}
+                title={route.name}
+                description={route.description}
+                date={route.createdAt.toISOString()}
+                imageUrl={route.locations[0].location.images[0]}
+                locations={route.locations}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

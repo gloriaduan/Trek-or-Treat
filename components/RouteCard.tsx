@@ -18,6 +18,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { getLocation } from "@/lib/locations";
+import { useLocationStore, useStartStore } from "@/store/app-store";
+import { useRouter } from "next/navigation";
 
 // Update the interface to make the removed fields optional
 interface RouteCardProps {
@@ -26,6 +29,7 @@ interface RouteCardProps {
   description: string;
   date: string;
   imageUrl?: string;
+  locations?: any;
 }
 
 // Update the component props to remove the unused parameters
@@ -35,9 +39,13 @@ export default function RouteCard({
   description,
   date,
   imageUrl = "/placeholder.svg?height=100&width=200",
+  locations,
 }: RouteCardProps) {
   const [mounted, setMounted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const addDestination = useLocationStore((state) => state.addDestination);
+  const addStart = useStartStore((state) => state.addStart);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -57,6 +65,23 @@ export default function RouteCard({
 
   const handleUse = (id: string) => {
     console.log(`Using route ${id}`);
+    // console.log(`TO ROUTE: ${locations[0].location.address}`);
+    locations.forEach((location: any, index: number) => {
+      let location_obj = {
+        id: location.location.id,
+        address: location.location.address,
+        longitude: location.location.longitude,
+        latitude: location.location.latitude,
+      };
+
+      if (index === 0) {
+        addStart(location_obj);
+      } else {
+        addDestination(location_obj);
+      }
+    });
+
+    router.push("/?from_saved=true");
   };
 
   return (
@@ -95,7 +120,7 @@ export default function RouteCard({
           </DropdownMenu>
         </div>
         <CardDescription className="line-clamp-2 text-sm">
-          {description}
+          {description || "No description"}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
@@ -104,7 +129,11 @@ export default function RouteCard({
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-end pt-2">
-        <Button onClick={() => handleUse(id)} size="sm" className="gap-1">
+        <Button
+          onClick={() => handleUse(id)}
+          size="sm"
+          className="gap-1 hover:bg-black"
+        >
           <Navigation className="h-3 w-3" />
           Use
         </Button>

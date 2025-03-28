@@ -112,6 +112,25 @@ export const getLocations = async () => {
   }
 };
 
+export const getLocation = async (id: string) => {
+  try {
+    const location = await prisma.location.findUnique({
+      where: { id },
+    });
+
+    return {
+      location,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};
+
 export const submitRating = async (data: any) => {
   const user = await currentUser();
 

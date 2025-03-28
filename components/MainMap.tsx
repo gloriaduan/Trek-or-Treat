@@ -42,9 +42,9 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
   const geojson = useGeoJsonStore((state) => state.geojson);
   const start = useStartStore((state) => state.start);
 
-  useEffect(() => {
-    console.log(layer, geojson);
-  }, []);
+  // useEffect(() => {
+  //   console.log(layer, geojson);
+  // }, []);
 
   const handleMarkerClick = (location: CustomLocation) => {
     // console.log(location.address);

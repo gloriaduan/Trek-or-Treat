@@ -54,7 +54,16 @@ export const getRoutes = async () => {
   }
 
   try {
-    const routes = await prisma.route.findMany({ where: { userId: user.id } });
+    const routes = await prisma.route.findMany({
+      where: { userId: user.id },
+      include: {
+        locations: {
+          include: {
+            location: true, // Fetch detailed Location info
+          },
+        },
+      },
+    });
 
     return {
       routes,

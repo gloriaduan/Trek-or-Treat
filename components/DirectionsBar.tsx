@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
@@ -15,6 +15,7 @@ import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
 import TransportationModeSelector from "./TransportationModeSelector";
 import SaveModal from "./SaveModal";
+import { useSearchParams } from "next/navigation";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -35,6 +36,13 @@ function DirectionsBar() {
   const start = useStartStore((state) => state.start);
   const profile = useLocationStore((state) => state.profile);
   const locations = useLocationStore((state) => state.locations);
+
+  useEffect(() => {
+    const searchParams = useSearchParams();
+    if (searchParams.get("from_saved") === "true") {
+      routeSubmit();
+    }
+  }, []);
 
   useEffect(() => {
     setValue(start.address || "");
