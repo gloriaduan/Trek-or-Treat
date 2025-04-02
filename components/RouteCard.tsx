@@ -44,6 +44,9 @@ export default function RouteCard({
   const [mounted, setMounted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const addDestination = useLocationStore((state) => state.addDestination);
+  const clearDestinations = useLocationStore(
+    (state) => state.clearDestinations
+  );
   const addStart = useStartStore((state) => state.addStart);
   const router = useRouter();
 
@@ -65,7 +68,9 @@ export default function RouteCard({
 
   const handleUse = (id: string) => {
     console.log(`Using route ${id}`);
-    // console.log(`TO ROUTE: ${locations[0].location.address}`);
+
+    clearDestinations();
+
     locations.forEach((location: any, index: number) => {
       let location_obj = {
         id: location.location.id,
