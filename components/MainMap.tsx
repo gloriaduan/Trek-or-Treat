@@ -10,15 +10,9 @@ import {
   useGeoJsonStore,
   useLayerStore,
   useStartStore,
+  useViewStore,
 } from "@/store/app-store";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from "@/components/ui/dialog";
+import { MapRef } from "react-map-gl";
 
 interface CustomLocation {
   id: string;
@@ -41,13 +35,10 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
   const layer = useLayerStore((state) => state.layer);
   const geojson = useGeoJsonStore((state) => state.geojson);
   const start = useStartStore((state) => state.start);
-
-  // useEffect(() => {
-  //   console.log(layer, geojson);
-  // }, []);
+  const mapView = useViewStore((state) => state.mapView);
+  const setViewState = useViewStore((state) => state.setView);
 
   const handleMarkerClick = (location: CustomLocation) => {
-    // console.log(location.address);
     setCurrLocation(location);
     setIsOpen(true);
   };
@@ -61,6 +52,8 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
           latitude: 43.5870256842269,
           zoom: 13,
         }}
+        {...mapView}
+        onMove={(evt) => setViewState(evt.viewState)}
         style={{}}
         mapStyle="mapbox://styles/9loria/cm494mxig006i01qog6g3fufo"
       >

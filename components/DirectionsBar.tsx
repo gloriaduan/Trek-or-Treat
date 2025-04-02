@@ -10,12 +10,14 @@ import {
   useLayerStore,
   useLocationStore,
   useStartStore,
+  useViewStore,
 } from "@/store/app-store";
 import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
 import TransportationModeSelector from "./TransportationModeSelector";
 import SaveModal from "./SaveModal";
 import { useSearchParams } from "next/navigation";
+import { map } from "svix/dist/cjs/openapi/rxjsStub";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -36,9 +38,11 @@ function DirectionsBar() {
   const start = useStartStore((state) => state.start);
   const profile = useLocationStore((state) => state.profile);
   const locations = useLocationStore((state) => state.locations);
+  const searchParams = useSearchParams();
+  const setMapView = useViewStore((state) => state.setView);
+  const mapView = useViewStore((state) => state.mapView);
 
   useEffect(() => {
-    const searchParams = useSearchParams();
     if (searchParams.get("from_saved") === "true") {
       routeSubmit();
     }
@@ -121,6 +125,12 @@ function DirectionsBar() {
         };
 
         addLayer(routeLayer);
+
+        setMapView({
+          longitude: start.longitude ?? mapView.longitude,
+          latitude: start.latitude ?? mapView.latitude,
+          zoom: 13,
+        });
 
         setCanSave(true);
       } catch (error) {

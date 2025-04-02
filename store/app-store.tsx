@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { Feature } from "geojson";
 import { LineLayerSpecification } from "mapbox-gl";
+import { MapRef } from "react-map-gl";
 
 interface CustomLocation {
   id?: string;
@@ -33,6 +34,33 @@ interface LayerStore {
   layer: LineLayerSpecification;
   addLayer: (object: LineLayerSpecification) => void;
 }
+
+interface viewStore {
+  mapView: {
+    longitude: number;
+    latitude: number;
+    zoom: number;
+  };
+  setView: (coords: {
+    longitude: number;
+    latitude: number;
+    zoom: number;
+  }) => void; // Add setView
+}
+
+export const useViewStore = create<viewStore>()(
+  devtools((set) => ({
+    mapView: {
+      longitude: -79.62275045355916,
+      latitude: 43.5870256842269,
+      zoom: 13,
+    },
+    setView: (coords: any) => {
+      const { longitude, latitude, zoom } = coords;
+      set({ mapView: { longitude, latitude, zoom } });
+    },
+  }))
+);
 
 export const useLocationStore = create<LocationStore>()(
   devtools((set) => ({
