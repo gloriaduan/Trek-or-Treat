@@ -78,3 +78,32 @@ export const getRoutes = async () => {
     };
   }
 };
+
+export const deleteRoute = async (routeId: string) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: "Not authenticated.",
+      status: "ERROR",
+    };
+  }
+
+  try {
+    const deletedRoute = await prisma.route.delete({
+      where: { id: routeId },
+    });
+
+    return {
+      deletedRoute,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};

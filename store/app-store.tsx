@@ -36,7 +36,7 @@ interface LayerStore {
   addLayer: (object: LineLayerSpecification) => void;
 }
 
-interface viewStore {
+interface ViewStore {
   mapView: {
     longitude: number;
     latitude: number;
@@ -49,7 +49,34 @@ interface viewStore {
   }) => void; // Add setView
 }
 
-export const useViewStore = create<viewStore>()(
+interface RouteStore {
+  routes: {
+    id: string;
+    userId: string;
+    name: string;
+    description: string;
+    createdAt: Date;
+    locations: {
+      routeId: string;
+      locationId: string;
+      location: {
+        id: string;
+        userId: string;
+        address: string;
+        description: string;
+        latitude: number;
+        longitude: number;
+        images: string[];
+        createdAt: Date;
+      };
+    }[];
+  }[];
+  setRoutes: (routes: RouteStore["routes"]) => void;
+  addRoute: (route: RouteStore["routes"][0]) => void;
+  removeRoute: (id: string) => void;
+}
+
+export const useViewStore = create<ViewStore>()(
   devtools((set) => ({
     mapView: {
       longitude: -79.62275045355916,
@@ -97,5 +124,17 @@ export const useStartStore = create<StartStore>()(
     start: {},
     addStart: (location) => set({ start: location }),
     removeStart: () => set({ start: {} }),
+  }))
+);
+
+export const useRouteStore = create<RouteStore>()(
+  devtools((set) => ({
+    routes: [],
+    setRoutes: (routes) => set({ routes }),
+    addRoute: (route) => set((state) => ({ routes: [...state.routes, route] })),
+    removeRoute: (id) =>
+      set((state) => ({
+        routes: state.routes.filter((route) => route.id !== id),
+      })),
   }))
 );

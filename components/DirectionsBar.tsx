@@ -73,6 +73,7 @@ function DirectionsBar() {
   const routeSubmit = async () => {
     if (locations.length >= 1 && Object.keys(start).length > 0) {
       setError("");
+      setSteps([]);
       let destinationStrs = "";
       let startStr = `${start.longitude},${start.latitude};`;
       locations.forEach((location) => {
@@ -168,6 +169,7 @@ function DirectionsBar() {
           </AddressAutofill>
           <TransportationModeSelector
             onModeChange={(mode) => console.log(`Selected mode: ${mode}`)}
+            routeSubmit={routeSubmit}
           />
           {Object.keys(locations).length == 0 && (
             <p className="text-white/50">

@@ -19,8 +19,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { getLocation } from "@/lib/locations";
-import { useLocationStore, useStartStore } from "@/store/app-store";
+import {
+  useLocationStore,
+  useRouteStore,
+  useStartStore,
+} from "@/store/app-store";
 import { useRouter } from "next/navigation";
+import { deleteRoute } from "@/lib/route";
 
 // Update the interface to make the removed fields optional
 interface RouteCardProps {
@@ -49,6 +54,7 @@ export default function RouteCard({
   );
   const addStart = useStartStore((state) => state.addStart);
   const router = useRouter();
+  const removeRoute = useRouteStore((state) => state.removeRoute);
 
   useEffect(() => {
     setMounted(true);
@@ -62,8 +68,16 @@ export default function RouteCard({
     console.log(`Editing route ${id}`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     console.log(`Deleting route ${id}`);
+    try {
+      const response = await deleteRoute(id);
+
+      if (response.status === "SUCCESS") {
+        console.log("Route deleted successfully.");
+        removeRoute(id);
+      }
+    } catch (error) {}
   };
 
   const handleUse = (id: string) => {
