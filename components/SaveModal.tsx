@@ -21,9 +21,17 @@ import { addRoute } from "@/lib/route";
 interface SaveModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  type: string;
+  routeData?: routeData;
 }
 
-function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
+interface routeData {
+  id: string;
+  title: string;
+  description: string;
+}
+
+function SaveModal({ isOpen, setIsOpen, type, routeData }: SaveModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const start = useStartStore((state) => state.start);
   const locations = useLocationStore((state) => state.locations);
@@ -69,6 +77,8 @@ function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
     error: "",
   });
 
+  const isEmpty = !routeData || Object.keys(routeData).length === 0;
+
   return (
     <Dialog
       open={isOpen}
@@ -79,14 +89,25 @@ function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
       <DialogContent>
         <form action={formAction}>
           <DialogHeader>
-            <DialogTitle className="mb-2">Save This Route</DialogTitle>
+            <DialogTitle className="mb-2">
+              {type === "save" ? "Save This Route" : "Edit Route"}
+            </DialogTitle>
           </DialogHeader>
-          <DialogDescription>Enter a title and description.</DialogDescription>
+          <DialogDescription>
+            {type === "save"
+              ? "Enter a title and description"
+              : "Edit your route's title and description"}
+          </DialogDescription>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="title">Title</Label>
               <div className="col-span-3">
-                <Input id="title" name="title" placeholder="My Route" />
+                <Input
+                  id="title"
+                  name="title"
+                  defaultValue={!isEmpty ? routeData?.title : ""}
+                  placeholder="My Route"
+                />
                 {errors.name && <p className="form-error">{errors.name}</p>}
               </div>
             </div>
@@ -97,6 +118,7 @@ function SaveModal({ isOpen, setIsOpen }: SaveModalProps) {
                   placeholder="More information..."
                   id="description"
                   name="description"
+                  defaultValue={!isEmpty ? routeData?.description : ""}
                 />
                 {errors.description && (
                   <p className="form-error">{errors.description}</p>

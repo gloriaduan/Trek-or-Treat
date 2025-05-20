@@ -222,7 +222,7 @@ function DirectionsBar() {
           )}
         </div>
       </ScrollArea>
-      <SaveModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <SaveModal isOpen={isOpen} setIsOpen={setIsOpen} type="save" />
     </aside>
   );
 }

@@ -36,7 +36,29 @@ function Page() {
       try {
         const res = await getRoutes();
         console.log(res);
-        setRoutes(res.routes || []);
+        setRoutes(
+          (res.routes || []).map((route: any) => ({
+            id: route.id,
+            userId: route.userId,
+            name: route.name,
+            description: route.description,
+            createdAt: new Date(route.createdAt),
+            locations: (route.locations || []).map((loc: any) => ({
+              routeId: loc.routeId,
+              locationId: loc.locationId,
+              location: {
+                id: loc.location.id,
+                userId: loc.location.userId,
+                address: loc.location.address,
+                description: loc.location.description,
+                latitude: loc.location.latitude,
+                longitude: loc.location.longitude,
+                images: loc.location.images,
+                createdAt: new Date(loc.location.createdAt),
+              },
+            })),
+          }))
+        );
       } catch (error) {
         console.error("Failed to fetch routes:", error);
       } finally {

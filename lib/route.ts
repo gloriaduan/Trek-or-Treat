@@ -16,23 +16,43 @@ export const addRoute = async (data: any) => {
   }
 
   try {
-    const newRoute = await prisma.route.create({
-      data: {
-        userId: user.id,
-        name: data.name,
-        description: data.description,
-        locations: {
-          create: data.locations.map((location: any) => ({
-            location: { connect: { id: location.id } },
-          })),
-        },
-      },
+    const existingRoute = await prisma.route.findUnique({
+      where: { id: data.id },
     });
 
-    return {
-      newRoute,
-      status: "SUCCESS",
-    };
+    if (existingRoute) {
+      const updatedRoute = await prisma.route.update({
+        where: { id: data.id },
+        data: {
+          name: data.name,
+          description: data.description,
+        }})
+      
+        return {
+        updatedRoute,
+        status: "SUCCESS",
+      };
+    }else {
+      const newRoute = await prisma.route.create({
+        data: {
+        userId: user.id,
+        name: data.name,
+        description: data.description, 
+        locations: {
+          create: data.locations.map((location: any) => ({
+          location: { connect: { id: location.id } },
+          })),
+        },
+        },
+      });
+
+      return {
+        newRoute,
+        status: "SUCCESS",
+      };
+    }
+
+
   } catch (error) {
     console.log(`error occurred: ${error}`);
 

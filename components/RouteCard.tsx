@@ -24,8 +24,22 @@ import {
   useRouteStore,
   useStartStore,
 } from "@/store/app-store";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import { deleteRoute } from "@/lib/route";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import Link from "next/link";
+import { Textarea } from "./ui/textarea";
+import SaveModal from "./SaveModal";
 
 // Update the interface to make the removed fields optional
 interface RouteCardProps {
@@ -55,6 +69,7 @@ export default function RouteCard({
   const addStart = useStartStore((state) => state.addStart);
   const router = useRouter();
   const removeRoute = useRouteStore((state) => state.removeRoute);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -63,10 +78,6 @@ export default function RouteCard({
   if (!mounted) {
     return null;
   }
-
-  const handleEdit = (id: string) => {
-    console.log(`Editing route ${id}`);
-  };
 
   const handleDelete = async (id: string) => {
     console.log(`Deleting route ${id}`);
@@ -104,59 +115,79 @@ export default function RouteCard({
   };
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
-      <div className="relative h-[100px]">
-        <Image
-          src={imageUrl || "/placeholder.svg"}
-          alt={`Map preview for ${title}`}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleEdit(id)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(id)}
-                className="text-destructive"
-              >
-                <Trash className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <>
+      <SaveModal
+        isOpen={editDialogOpen}
+        setIsOpen={setEditDialogOpen}
+        type="edit"
+        routeData={{
+          id,
+          title,
+          description,
+        }}
+      />
+      <Card className="overflow-hidden transition-all hover:shadow-md">
+        <div className="relative h-[100px]">
+          <Image
+            src={imageUrl || "/placeholder.svg"}
+            alt={`Map preview for ${title}`}
+            fill
+            className="object-cover"
+          />
         </div>
-        <CardDescription className="line-clamp-2 text-sm">
-          {description || "No description"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <div className="text-xs text-muted-foreground">
-          Saved on {new Date(date).toLocaleDateString()}
-        </div>
-      </CardContent>
-      <CardFooter className="flex items-center justify-end pt-2">
-        <Button
-          onClick={() => handleUse(id)}
-          size="sm"
-          className="gap-1 hover:bg-black"
-        >
-          <Navigation className="h-3 w-3" />
-          Use
-        </Button>
-      </CardFooter>
-    </Card>
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between">
+            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  {/* <Link className="w-full" href={`/edit/${id}`}> */}
+                  <button
+                    className="w-full flex items-center"
+                    onClick={() => setEditDialogOpen(true)}
+                  >
+                    <Edit className="mr-4" />
+                    Edit
+                  </button>
+                  {/* </Link> */}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDelete(id)}
+                  className="text-destructive"
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <CardDescription className="line-clamp-2 text-sm">
+            {description || "No description"}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="pb-2">
+          <div className="text-xs text-muted-foreground">
+            Saved on {new Date(date).toLocaleDateString()}
+          </div>
+        </CardContent>
+        <CardFooter className="flex items-center justify-end pt-2">
+          <Button
+            onClick={() => handleUse(id)}
+            size="sm"
+            className="gap-1 hover:bg-black"
+          >
+            <Navigation className="h-3 w-3" />
+            Use
+          </Button>
+        </CardFooter>
+      </Card>
+    </>
   );
 }
