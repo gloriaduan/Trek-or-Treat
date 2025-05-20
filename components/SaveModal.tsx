@@ -16,7 +16,8 @@ import { Textarea } from "./ui/textarea";
 import { useActionState, useState } from "react";
 import { routeSaveSchema } from "@/lib/validation";
 import { z } from "zod";
-import { addRoute } from "@/lib/route";
+import { addRoute, updateRoute } from "@/lib/route";
+import { useRouteStore } from "@/store/app-store";
 
 interface SaveModalProps {
   isOpen: boolean;
@@ -35,10 +36,12 @@ function SaveModal({ isOpen, setIsOpen, type, routeData }: SaveModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const start = useStartStore((state) => state.start);
   const locations = useLocationStore((state) => state.locations);
+  const routes = useRouteStore.getState().routes;
+  const setRoutes = useRouteStore((state) => state.setRoutes);
 
   const handleSaveRoute = async (prevState: any, formData: FormData) => {
     try {
-      console.log("submitting form");
+      console.log("saving route...");
       const formValues = {
         name: formData.get("title") as string,
         description: formData.get("description") as string,
@@ -73,9 +76,59 @@ function SaveModal({ isOpen, setIsOpen, type, routeData }: SaveModalProps) {
     }
   };
 
-  const [state, formAction, isPending] = useActionState(handleSaveRoute, {
-    error: "",
-  });
+  const handleUpdateRoute = async (prevState: any, formData: FormData) => {
+    try {
+      console.log("updating route..");
+      const formValues = {
+        name: formData.get("title") as string,
+        description: formData.get("description") as string,
+      };
+
+      await routeSaveSchema.parseAsync(formValues);
+
+      if (!routeData) {
+        setErrors({ general: "No route data provided for update." });
+        return { ...prevState, error: "No route data provided for update." };
+      }
+
+      const response = await updateRoute(routeData.id, formValues);
+
+      if (response.status === "SUCCESS") {
+        console.log("Route updated successfully.");
+        setErrors({});
+        console.log(response);
+        setRoutes(
+          routes.map((route) =>
+            route.id === routeData.id && response.updatedRoute
+              ? response.updatedRoute
+              : route
+          )
+        );
+        setIsOpen(false);
+      } else {
+        setErrors({ general: "Please log in to save routes." });
+      }
+    } catch (error) {
+      console.log(error);
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors;
+        setErrors(fieldErrors as unknown as Record<string, string>);
+        return { ...prevState, error: "Validation failed." };
+      }
+
+      return {
+        ...prevState,
+        error: "Failed to submit form.",
+      };
+    }
+  };
+
+  const [state, formAction, isPending] = useActionState(
+    type === "edit" ? handleUpdateRoute : handleSaveRoute,
+    {
+      error: "",
+    }
+  );
 
   const isEmpty = !routeData || Object.keys(routeData).length === 0;
 
