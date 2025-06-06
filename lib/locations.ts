@@ -5,19 +5,23 @@ import prisma from "./db";
 
 import { utapi } from "@/app/api/uploadthing/uploadthing";
 
-export const deleteFile = async (key: string) => {
+const authenticateUser = async () => {
   const user = await currentUser();
+  if (!user) {
+    return { error: "Not authenticated.", status: "ERROR", user: null };
+  }
+  return { user, status: "SUCCESS", error: null };
+};
+
+export const deleteFile = async (key: string) => {
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
+  }
 
   if (!key) {
     return {
       error: "File key required.",
-      status: "ERROR",
-    };
-  }
-
-  if (!user) {
-    return {
-      error: "Not authenticated.",
       status: "ERROR",
     };
   }
@@ -37,17 +41,14 @@ export const deleteFile = async (key: string) => {
 };
 
 export const postLocation = async (data: any) => {
-  const user = await currentUser();
-
-  if (!user) {
-    return {
-      error: "Not authenticated.",
-      status: "ERROR",
-    };
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
   }
+  const user = authResult.user!;
 
   try {
-    console.log(`User ID: ${user.id}`);
+    // console.log(`User ID: ${user.id}`);
 
     const postImages = data.images.map((image: any) => {
       return image.url;
@@ -131,15 +132,100 @@ export const getLocation = async (id: string) => {
   }
 };
 
-export const submitRating = async (data: any) => {
-  const user = await currentUser();
+export const getUserLocations = async () => {
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
+  }
 
-  if (!user) {
+  const user = authResult.user!;
+
+  try {
+    const locations = await prisma.location.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return {
-      error: "Not authenticated.",
+      locations,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+    return {
+      error,
       status: "ERROR",
     };
   }
+};
+
+export const updateLocation = async (id: string, data: any) => {
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
+  }
+  const user = authResult.user!;
+
+  try {
+    const location = await prisma.location.update({
+      where: {
+        id,
+        userId: user.id,
+      },
+      data: {
+        description: data.description,
+      },
+    });
+
+    return {
+      location,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};
+
+export const deleteLocation = async (id: string) => {
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
+  }
+
+  const user = authResult.user!;
+
+  try {
+    const location = await prisma.location.delete({
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
+
+    return {
+      location,
+      status: "SUCCESS",
+    };
+  } catch (error) {
+    console.log(`error occurred: ${error}`);
+    return {
+      error,
+      status: "ERROR",
+    };
+  }
+};
+
+export const submitRating = async (data: any) => {
+  const authResult = await authenticateUser();
+  if (authResult.status === "ERROR") {
+    return { error: authResult.error, status: "ERROR" };
+  }
+  const user = authResult.user!;
 
   try {
     const existingRating = await prisma.rating.findFirst({

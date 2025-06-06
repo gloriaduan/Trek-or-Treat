@@ -1,41 +1,59 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import RouteCard from "@/components/RouteCard";
-import { getRoutes } from "@/lib/route";
-import { useRouteStore } from "@/store/app-store";
+import ItemCard from "@/components/ItemCard";
+import { getRoutes, deleteRoute } from "@/lib/route";
+import {
+  useRouteStore,
+  useLocationStore,
+  useStartStore,
+} from "@/store/app-store";
+import SaveModal from "@/components/SaveModal";
+import { useRouter } from "next/navigation";
 
-function Page() {
-  interface Route {
-    id: string;
-    name: string;
-    description: string;
-    createdAt: Date;
-    locations: {
-      location: {
-        id: string;
-        userId: string;
-        description: string;
-        createdAt: Date;
-        images: string[];
-        address: string;
-        latitude: number;
-        longitude: number;
-      };
-      routeId: string;
-      locationId: string;
-    }[];
-  }
+interface Route {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+  locations: {
+    location: {
+      id: string;
+      userId: string;
+      description: string;
+      createdAt: Date;
+      images: string[];
+      address: string;
+      latitude: number;
+      longitude: number;
+    };
+    routeId: string;
+    locationId: string;
+  }[];
+}
 
+function SavedRoutesPage() {
   const routes = useRouteStore((state) => state.routes);
   const setRoutes = useRouteStore((state) => state.setRoutes);
+  const removeRouteFromStore = useRouteStore((state) => state.removeRoute);
+
+  const addDestination = useLocationStore((state) => state.addDestination);
+  const clearDestinations = useLocationStore(
+    (state) => state.clearDestinations
+  );
+  const addStart = useStartStore((state) => state.addStart);
+  const router = useRouter();
+
   const [loading, setLoading] = useState(true);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentRouteDataForModal, setCurrentRouteDataForModal] =
+    useState<null | { id: string; title: string; description: string }>(null);
 
   useEffect(() => {
     async function fetchRoutes() {
+      setLoading(true);
       try {
         const res = await getRoutes();
-        console.log(res);
         setRoutes(
           (res.routes || []).map((route: any) => ({
             id: route.id,
@@ -65,34 +83,105 @@ function Page() {
         setLoading(false);
       }
     }
-
     fetchRoutes();
-  }, []);
+  }, [setRoutes]);
+
+  const handleRouteDelete = async (id: string) => {
+    console.log(`Deleting route ${id}`);
+    try {
+      const response = await deleteRoute(id);
+      if (response.status === "SUCCESS") {
+        console.log("Route deleted successfully.");
+        removeRouteFromStore(id);
+      } else {
+        console.error("Failed to delete route:", response.error);
+        alert(`Error deleting route: ${response.error || "Unknown error"}`);
+      }
+    } catch (error: any) {
+      console.error("Error in handleDelete for route:", error);
+      alert(`Error: ${error.message || "Could not delete route"}`);
+    }
+  };
+
+  const handleRouteEdit = (routeId: string) => {
+    const route = routes.find((r) => r.id === routeId);
+    if (route) {
+      setCurrentRouteDataForModal({
+        id: route.id,
+        title: route.name,
+        description: route.description,
+      });
+      setEditDialogOpen(true);
+    }
+  };
+
+  const handleRouteUse = (routeId: string) => {
+    const route = routes.find((r) => r.id === routeId);
+    if (!route || !route.locations) return;
+
+    console.log(`Using route ${routeId}`);
+    clearDestinations();
+    route.locations.forEach((locationItem: any, index: number) => {
+      let location_obj = {
+        id: locationItem.location.id,
+        address: locationItem.location.address,
+        longitude: locationItem.location.longitude,
+        latitude: locationItem.location.latitude,
+      };
+      if (index === 0) {
+        addStart(location_obj);
+      } else {
+        addDestination(location_obj);
+      }
+    });
+    router.push("/?from_saved=true");
+  };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading saved routes...
+      </div>
+    );
   }
 
   return (
-    <div className="py-16">
-      <div className="container">
-        <h1 className="mb-6 text-3xl font-bold">Saved Routes</h1>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routes.map((route) => (
-            <RouteCard
-              key={route.id}
-              id={route.id}
-              title={route.name}
-              description={route.description}
-              date={route.createdAt.toISOString()}
-              imageUrl={route.locations[0].location.images[0]}
-              locations={route.locations}
-            />
-          ))}
+    <>
+      {currentRouteDataForModal && (
+        <SaveModal
+          isOpen={editDialogOpen}
+          setIsOpen={setEditDialogOpen}
+          type="edit"
+          data={currentRouteDataForModal}
+        />
+      )}
+      <div className="py-16">
+        <div className="container">
+          <h1 className="mb-6 text-3xl font-bold">Saved Routes</h1>
+          {routes.length === 0 && !loading && (
+            <p>You haven&apos;t saved any routes yet.</p>
+          )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {routes.map((route) => (
+              <ItemCard
+                key={route.id}
+                id={route.id}
+                title={route.name}
+                description={route.description}
+                date={route.createdAt.toISOString()}
+                imageUrl={route.locations?.[0]?.location?.images?.[0]}
+                itemType="route"
+                primaryActionText="Use"
+                onDelete={() => handleRouteDelete(route.id)}
+                onEdit={() => handleRouteEdit(route.id)}
+                onPrimaryAction={() => handleRouteUse(route.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Page;
+export default SavedRoutesPage;
