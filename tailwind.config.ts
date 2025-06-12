@@ -16,7 +16,7 @@ export default withUt({
           foreground: "hsl(var(--primary-foreground))",
         },
         black: "#221E22",
-        white: "#FFFCF2",
+        white: "#f7f7f7",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -65,7 +65,7 @@ export default withUt({
         },
       },
       fontFamily: {
-        poppins: ["var(--font-poppins)", "sans-serif"],
+        prompt: ["var(--font-prompt)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

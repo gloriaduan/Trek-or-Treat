@@ -4,34 +4,34 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 
-const poppins = localFont({
+const prompt = localFont({
   src: [
     {
-      path: "./fonts/Poppins-Thin.ttf",
+      path: "./fonts/Prompt-Thin.ttf",
       weight: "200",
       style: "normal",
     },
     {
-      path: "./fonts/Poppins-Regular.ttf",
+      path: "./fonts/Prompt-Regular.ttf",
       weight: "400",
       style: "normal",
     },
     {
-      path: "./fonts/Poppins-Medium.ttf",
+      path: "./fonts/Prompt-Medium.ttf",
       weight: "500",
       style: "normal",
     },
     {
-      path: "./fonts/Poppins-Bold.ttf",
+      path: "./fonts/Prompt-Bold.ttf",
       weight: "700",
       style: "normal",
     },
   ],
-  variable: "--font-poppins",
+  variable: "--font-prompt",
 });
 
 export const metadata: Metadata = {
-  title: "HauntMap",
+  title: "Trek or Treat",
   description: "Find your Halloween Trick-or-Treating Route.",
 };
 
@@ -43,7 +43,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${poppins.variable} font-poppins`}>
+        <body
+          className={`${prompt.variable} font-prompt min-h-screen flex flex-col`}
+        >
           <Navbar />
           {children}
         </body>

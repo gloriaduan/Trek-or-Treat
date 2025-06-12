@@ -104,7 +104,9 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
           </button>
         </div>
         <DialogHeader>
-          <DialogTitle className="mb-2">{currLocation.address}</DialogTitle>
+          <DialogTitle className="mb-2 text-2xl">
+            {currLocation.address}
+          </DialogTitle>
           <div className="flex items-center">
             <Star className="fill-current text-primary" />
             <p className="ml-2 text-primary">
