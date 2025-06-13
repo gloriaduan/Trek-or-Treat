@@ -58,7 +58,12 @@ export async function POST(req: Request) {
   if (eventType == "user.created") {
     try {
       const { id, username, image_url } = evt.data;
-      const newUser = { id, username, avatar: image_url };
+      const newUser = {
+        id,
+        username: username ?? "",
+        avatar: image_url,
+        createdAt: new Date(),
+      };
 
       const user = await createUser(newUser);
 
@@ -69,7 +74,10 @@ export async function POST(req: Request) {
   } else if (eventType == "user.updated") {
     try {
       const { id, username, image_url } = evt.data;
-      const updatedUser = { username, avatar: image_url };
+      const updatedUser = {
+        username: username ?? undefined,
+        avatar: image_url,
+      };
 
       const user = await updateUser(id, updatedUser);
       return new Response(`User updated: ${user}`, { status: 200 });
