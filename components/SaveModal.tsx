@@ -48,7 +48,12 @@ function SaveModal({
   const routes = useRouteStore.getState().routes;
   const setRoutes = useRouteStore((state) => state.setRoutes);
 
-  const handleSaveRoute = async (prevState: any, formData: FormData) => {
+  type ActionState = { error: string } | undefined;
+
+  const handleSaveRoute = async (
+    prevState: ActionState,
+    formData: FormData
+  ): Promise<ActionState> => {
     try {
       console.log("saving route...");
       const formValues = {
@@ -60,9 +65,17 @@ function SaveModal({
 
       const locationList = [start, ...locations];
 
-      const data = { ...formValues, locations: locationList };
+      // Map locations to ensure id is a string and matches RouteLocationInput
+      const mappedLocations = locationList
+        .filter((loc) => typeof loc.id === "string")
+        .map((loc) => ({
+          ...loc,
+          id: String(loc.id),
+        }));
 
-      const response = await addRoute(data);
+      const dataToSend = { ...formValues, locations: mappedLocations };
+
+      const response = await addRoute(dataToSend);
 
       if (response.status === "SUCCESS") {
         console.log("Route saved successfully.");
@@ -78,14 +91,14 @@ function SaveModal({
         return { ...prevState, error: "Validation failed." };
       }
 
-      return {
-        ...prevState,
-        error: "Failed to submit form.",
-      };
+      return { ...prevState, error: "Failed to submit form." };
     }
   };
 
-  const handleUpdateRoute = async (prevState: any, formData: FormData) => {
+  const handleUpdateRoute = async (
+    prevState: ActionState,
+    formData: FormData
+  ): Promise<ActionState> => {
     try {
       console.log("updating...");
       const formValues = {
@@ -102,20 +115,17 @@ function SaveModal({
 
       // Handle different item types
       if (itemType === "post") {
-        const response = await updateLocation(data.id, formValues.description);
+        const response = await updateLocation(data.id, {
+          description: formValues.description,
+        });
 
         if (response.error) {
           setErrors({ general: response.error as string });
-          return { ...prevState, error: response.error };
+          return { ...prevState, error: String(response.error) };
         } else {
           console.log("Post updated successfully.");
           setErrors({});
-          setIsOpen(false);
-
-          if (onSuccess) {
-            onSuccess(data.id, formValues.description);
-          }
-          return { ...prevState };
+          return { ...prevState, error: "" };
         }
       } else {
         const response = await updateRoute(data.id, formValues);
@@ -144,10 +154,7 @@ function SaveModal({
         return { ...prevState, error: "Validation failed." };
       }
 
-      return {
-        ...prevState,
-        error: "Failed to submit form.",
-      };
+      return { ...prevState, error: "Failed to submit form." };
     }
   };
 
@@ -173,6 +180,9 @@ function SaveModal({
       }}
     >
       <DialogContent>
+        {state && state.error && state.error !== "" && (
+          <div className="text-red-500 mb-2">{state.error}</div>
+        )}
         <form action={formAction}>
           <DialogHeader>
             <DialogTitle className="mb-2">

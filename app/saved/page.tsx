@@ -11,27 +11,6 @@ import {
 import SaveModal from "@/components/SaveModal";
 import { useRouter } from "next/navigation";
 
-interface Route {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: Date;
-  locations: {
-    location: {
-      id: string;
-      userId: string;
-      description: string;
-      createdAt: Date;
-      images: string[];
-      address: string;
-      latitude: number;
-      longitude: number;
-    };
-    routeId: string;
-    locationId: string;
-  }[];
-}
-
 function SavedRoutesPage() {
   const routes = useRouteStore((state) => state.routes);
   const setRoutes = useRouteStore((state) => state.setRoutes);
@@ -55,13 +34,13 @@ function SavedRoutesPage() {
       try {
         const res = await getRoutes();
         setRoutes(
-          (res.routes || []).map((route: any) => ({
+          (res.routes || []).map((route) => ({
             id: route.id,
             userId: route.userId,
             name: route.name,
             description: route.description,
             createdAt: new Date(route.createdAt),
-            locations: (route.locations || []).map((loc: any) => ({
+            locations: (route.locations || []).map((loc) => ({
               routeId: loc.routeId,
               locationId: loc.locationId,
               location: {
@@ -77,7 +56,7 @@ function SavedRoutesPage() {
             })),
           }))
         );
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Failed to fetch routes:", error);
       } finally {
         setLoading(false);
@@ -97,9 +76,9 @@ function SavedRoutesPage() {
         console.error("Failed to delete route:", response.error);
         alert(`Error deleting route: ${response.error || "Unknown error"}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error in handleDelete for route:", error);
-      alert(`Error: ${error.message || "Could not delete route"}`);
+      alert(`Error: ${(error as Error).message || "Could not delete route"}`);
     }
   };
 
@@ -121,8 +100,8 @@ function SavedRoutesPage() {
 
     console.log(`Using route ${routeId}`);
     clearDestinations();
-    route.locations.forEach((locationItem: any, index: number) => {
-      let location_obj = {
+    route.locations.forEach((locationItem, index) => {
+      const location_obj = {
         id: locationItem.location.id,
         address: locationItem.location.address,
         longitude: locationItem.location.longitude,

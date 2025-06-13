@@ -23,7 +23,6 @@ export default function PostItemAdapter({
   post,
   onDeleteSuccess,
 }: PostItemAdapterProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentPostData, setCurrentPostData] = useState<null | {
     id: string;
@@ -33,7 +32,6 @@ export default function PostItemAdapter({
   const [currentPost, setCurrentPost] = useState<Post>(post);
 
   const handleDelete = async (id: string) => {
-    setIsProcessing(true);
     const result = await deleteLocation(id);
     if (result?.error) {
       console.error("PostItemAdapter: Error deleting post - ", result.error);
@@ -43,10 +41,9 @@ export default function PostItemAdapter({
         onDeleteSuccess(id);
       }
     }
-    setIsProcessing(false);
   };
 
-  const handleEdit = async (id: string) => {
+  const handleEdit = async () => {
     setCurrentPostData({
       id: currentPost.id,
       title: currentPost.address || "No address provided",
@@ -55,7 +52,7 @@ export default function PostItemAdapter({
     setEditDialogOpen(true);
   };
 
-  const handlePostUpdate = (id: string, newDescription: string) => {
+  const handlePostUpdate = (newDescription: string) => {
     setCurrentPost((prev) => ({
       ...prev,
       description: newDescription,

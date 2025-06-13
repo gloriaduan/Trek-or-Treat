@@ -2,8 +2,13 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "./db";
+import type {
+  AddRouteInput,
+  UpdateRouteInput,
+  RouteLocationInput,
+} from "./routeTypes";
 
-export const addRoute = async (data: any) => {
+export const addRoute = async (data: AddRouteInput) => {
   const user = await currentUser();
 
   if (!user) {
@@ -20,7 +25,7 @@ export const addRoute = async (data: any) => {
         name: data.name,
         description: data.description,
         locations: {
-          create: data.locations.map((location: any) => ({
+          create: data.locations.map((location: RouteLocationInput) => ({
             location: { connect: { id: location.id } },
           })),
         },
@@ -77,7 +82,7 @@ export const getRoutes = async () => {
   }
 };
 
-export const updateRoute = async (routeId: string, data: any) => {
+export const updateRoute = async (routeId: string, data: UpdateRouteInput) => {
   const user = await currentUser();
 
   if (!user) {

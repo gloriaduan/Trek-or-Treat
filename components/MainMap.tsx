@@ -2,7 +2,7 @@
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Map, { Layer, Marker, Source } from "react-map-gl";
 import MapModal from "./MapModal";
 import { API_KEY } from "@/lib/config";
@@ -12,7 +12,6 @@ import {
   useStartStore,
   useViewStore,
 } from "@/store/app-store";
-import { MapRef } from "react-map-gl";
 
 interface CustomLocation {
   id: string;

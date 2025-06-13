@@ -4,6 +4,11 @@ import { currentUser } from "@clerk/nextjs/server";
 import prisma from "./db";
 
 import { utapi } from "@/app/api/uploadthing/uploadthing";
+import type {
+  PostLocationInput,
+  UpdateLocationInput,
+  SubmitRatingInput,
+} from "./locationTypes";
 
 const authenticateUser = async () => {
   const user = await currentUser();
@@ -40,7 +45,7 @@ export const deleteFile = async (key: string) => {
   }
 };
 
-export const postLocation = async (data: any) => {
+export const postLocation = async (data: PostLocationInput) => {
   const authResult = await authenticateUser();
   if (authResult.status === "ERROR") {
     return { error: authResult.error, status: "ERROR" };
@@ -50,7 +55,7 @@ export const postLocation = async (data: any) => {
   try {
     // console.log(`User ID: ${user.id}`);
 
-    const postImages = data.images.map((image: any) => {
+    const postImages = data.images.map((image: { url: string }) => {
       return image.url;
     });
 
@@ -160,7 +165,7 @@ export const getUserLocations = async () => {
   }
 };
 
-export const updateLocation = async (id: string, data: any) => {
+export const updateLocation = async (id: string, data: UpdateLocationInput) => {
   const authResult = await authenticateUser();
   if (authResult.status === "ERROR") {
     return { error: authResult.error, status: "ERROR" };
@@ -220,7 +225,7 @@ export const deleteLocation = async (id: string) => {
   }
 };
 
-export const submitRating = async (data: any) => {
+export const submitRating = async (data: SubmitRatingInput) => {
   const authResult = await authenticateUser();
   if (authResult.status === "ERROR") {
     return { error: authResult.error, status: "ERROR" };

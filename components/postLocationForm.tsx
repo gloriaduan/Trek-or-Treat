@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CircleX } from "lucide-react";
 import { locationSchema } from "@/lib/validation";
-import { set, z } from "zod";
+import { z } from "zod";
 import { deleteFile, postLocation } from "@/lib/locations";
 import { API_KEY } from "@/lib/config";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,7 @@ const PostLocationForm = () => {
   >([]);
   const router = useRouter();
 
-  const handleSubmit = async (prevState: any, formData: FormData) => {
+  const handleSubmit = async (_: unknown, formData: FormData) => {
     try {
       console.log("Form submitted.");
       const formValues = {
@@ -87,17 +87,16 @@ const PostLocationForm = () => {
 
         setErrors(fieldErrors as unknown as Record<string, string>);
 
-        return { ...prevState, error: "Validation failed." };
+        return { error: "Validation failed." };
       }
 
       return {
-        ...prevState,
         error: "Failed to submit form.",
       };
     }
   };
 
-  const [state, formAction, isPending] = useActionState(handleSubmit, {
+  const [, formAction, isPending] = useActionState(handleSubmit, {
     error: "",
   });
 

@@ -61,7 +61,7 @@ const Page = () => {
   if (posts.length === 0) {
     return (
       <div className="container mx-auto py-8">
-        You haven't posted any locations yet.
+        You haven&apos;t posted any locations yet.
       </div>
     );
   }

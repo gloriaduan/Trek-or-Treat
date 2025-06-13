@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Car, Bike, FootprintsIcon as Walking } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocationStore } from "@/store/app-store";
@@ -8,24 +7,20 @@ import { useLocationStore } from "@/store/app-store";
 type TransportMode = "driving" | "walking" | "cycling";
 
 interface TransportationModeSelectorProps {
-  defaultMode?: TransportMode;
   onModeChange?: (mode: TransportMode) => void;
   routeSubmit?: () => void;
   className?: string;
 }
 
 export default function TransportationModeSelector({
-  defaultMode = "driving",
   onModeChange,
   routeSubmit,
   className,
 }: TransportationModeSelectorProps) {
-  // const [selectedMode, setSelectedMode] = useState<TransportMode>(defaultMode);
   const profile = useLocationStore((state) => state.profile);
   const selectProfile = useLocationStore((state) => state.setProfile);
 
   const handleModeChange = (mode: TransportMode) => {
-    // setSelectedMode(mode);
     selectProfile(mode);
     onModeChange?.(mode);
     routeSubmit?.();

@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
@@ -17,7 +17,6 @@ import { LineLayerSpecification } from "mapbox-gl";
 import TransportationModeSelector from "./TransportationModeSelector";
 import SaveModal from "./SaveModal";
 import { useSearchParams } from "next/navigation";
-import { map } from "svix/dist/cjs/openapi/rxjsStub";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -42,44 +41,15 @@ function DirectionsBar() {
   const setMapView = useViewStore((state) => state.setView);
   const mapView = useViewStore((state) => state.mapView);
 
-  useEffect(() => {
-    if (searchParams.get("from_saved") === "true") {
-      routeSubmit();
-    }
-  }, []);
-
-  useEffect(() => {
-    setValue(start.address || "");
-  }, [start]);
-
-  const handleChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setValue(e.target.value);
-  };
-
-  const handleAutofillRetrieve = async (res: any) => {
-    console.log(res);
-    const destination = {
-      id: res.features[0].properties.id,
-      address: res.features[0].properties.place_name,
-      longitude: res.features[0].geometry.coordinates[0],
-      latitude: res.features[0].geometry.coordinates[1],
-    };
-    setValue(res.features[0].properties.place_name);
-    addStart(destination);
-  };
-
   const routeSubmit = async () => {
     if (locations.length >= 1 && Object.keys(start).length > 0) {
       setError("");
       setSteps([]);
       let destinationStrs = "";
-      let startStr = `${start.longitude},${start.latitude};`;
+      const startStr = `${start.longitude},${start.latitude};`;
       locations.forEach((location) => {
         destinationStrs += `${location.longitude},${location.latitude};`;
       });
-
       try {
         const res = await fetch(
           `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startStr}${destinationStrs.substring(
@@ -90,12 +60,14 @@ function DirectionsBar() {
         );
         const data = await res.json();
         console.log(data);
-        const routeCoords = data.routes[0].geometry.coordinates;
-        const routeSteps = data.routes[0].legs;
+        const routeCoords: number[][] = data.routes[0].geometry.coordinates;
+        const routeSteps: Array<{
+          steps: { maneuver: { instruction: string } }[];
+        }> = data.routes[0].legs;
 
-        for (let leg in routeSteps) {
-          for (let step in routeSteps[leg].steps) {
-            setSteps((prev) => [...prev, routeSteps[leg].steps[step]]);
+        for (const leg of routeSteps) {
+          for (const step of leg.steps) {
+            setSteps((prev) => [...prev, step]);
           }
         }
 
@@ -134,12 +106,43 @@ function DirectionsBar() {
         });
 
         setCanSave(true);
-      } catch (error) {
+      } catch (e) {
         setError("An error occurred. Please try again.");
       }
     } else {
       setError("Please enter a starting point and at least one destination.");
     }
+  };
+
+  useEffect(() => {
+    if (searchParams.get("from_saved") === "true") {
+      routeSubmit();
+    }
+  }, [routeSubmit, searchParams]);
+
+  useEffect(() => {
+    setValue(start.address || "");
+  }, [start]);
+
+  const handleChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setValue(e.target.value);
+  };
+
+  const handleAutofillRetrieve = async (res: any) => {
+    if (!res.features || !res.features[0]) return;
+    const destination = {
+      id:
+        res.features[0].properties.id ||
+        res.features[0].properties.mapbox_id ||
+        "",
+      address: res.features[0].properties.place_name,
+      longitude: res.features[0].geometry.coordinates[0],
+      latitude: res.features[0].geometry.coordinates[1],
+    };
+    setValue(res.features[0].properties.place_name);
+    addStart(destination);
   };
 
   const openSaveModal = () => {
@@ -178,13 +181,13 @@ function DirectionsBar() {
               </span>
             </p>
           )}
-          {error && <p className="text-white/50">{error}</p>}
           {locations &&
             locations.map((location, i) => (
               <p className="text-muted" key={i}>
                 {location.address}
               </p>
             ))}
+          {error && <p className="text-red-500">{error}</p>}
           <button className="btn-primary" onClick={routeSubmit}>
             Get Route
           </button>
