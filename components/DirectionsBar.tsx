@@ -108,7 +108,7 @@ function DirectionsBar() {
 
         setCanSave(true);
       } catch (e) {
-        setError("An error occurred. Please try again.");
+        setError(`An error occurred. Please try again. {${e}}`);
       }
     } else {
       setError("Please enter a starting point and at least one destination.");
