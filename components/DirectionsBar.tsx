@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "./ui/label";
@@ -17,6 +17,7 @@ import { LineLayerSpecification } from "mapbox-gl";
 import TransportationModeSelector from "./TransportationModeSelector";
 import SaveModal from "./SaveModal";
 import { useSearchParams } from "next/navigation";
+import type { AddressAutofillRetrieveResponse } from "@mapbox/search-js-core";
 
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
@@ -41,7 +42,7 @@ function DirectionsBar() {
   const setMapView = useViewStore((state) => state.setView);
   const mapView = useViewStore((state) => state.mapView);
 
-  const routeSubmit = async () => {
+  const routeSubmit = useCallback(async () => {
     if (locations.length >= 1 && Object.keys(start).length > 0) {
       setError("");
       setSteps([]);
@@ -112,7 +113,16 @@ function DirectionsBar() {
     } else {
       setError("Please enter a starting point and at least one destination.");
     }
-  };
+  }, [
+    locations,
+    start,
+    profile,
+    addGeoJson,
+    addLayer,
+    setMapView,
+    mapView.longitude,
+    mapView.latitude,
+  ]);
 
   useEffect(() => {
     if (searchParams.get("from_saved") === "true") {
@@ -124,24 +134,23 @@ function DirectionsBar() {
     setValue(start.address || "");
   }, [start]);
 
-  const handleChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setValue(e.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   };
 
-  const handleAutofillRetrieve = async (res: any) => {
+  const handleAutofillRetrieve = async (
+    res: AddressAutofillRetrieveResponse
+  ) => {
     if (!res.features || !res.features[0]) return;
+    const feature = res.features[0];
     const destination = {
-      id:
-        res.features[0].properties.id ||
-        res.features[0].properties.mapbox_id ||
-        "",
-      address: res.features[0].properties.place_name,
-      longitude: res.features[0].geometry.coordinates[0],
-      latitude: res.features[0].geometry.coordinates[1],
+      id: feature.properties.mapbox_id || "",
+      address:
+        feature.properties.place_name || feature.properties.feature_name || "",
+      longitude: feature.geometry.coordinates[0],
+      latitude: feature.geometry.coordinates[1],
     };
-    setValue(res.features[0].properties.place_name);
+    setValue(destination.address);
     addStart(destination);
   };
 

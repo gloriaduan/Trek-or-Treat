@@ -40,7 +40,6 @@ function SaveModal({
   type,
   data,
   itemType = "route",
-  onSuccess,
 }: SaveModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const start = useStartStore((state) => state.start);
