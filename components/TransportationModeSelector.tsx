@@ -8,7 +8,7 @@ type TransportMode = "driving" | "walking" | "cycling";
 
 interface TransportationModeSelectorProps {
   onModeChange?: (mode: TransportMode) => void;
-  routeSubmit?: () => void;
+  routeSubmit?: (mode: string) => void;
   className?: string;
 }
 
@@ -23,7 +23,7 @@ export default function TransportationModeSelector({
   const handleModeChange = (mode: TransportMode) => {
     selectProfile(mode);
     onModeChange?.(mode);
-    routeSubmit?.();
+    routeSubmit?.(mode);
   };
 
   return (

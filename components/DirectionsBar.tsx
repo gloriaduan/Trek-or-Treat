@@ -42,93 +42,96 @@ function DirectionsBar() {
   const setMapView = useViewStore((state) => state.setView);
   const mapView = useViewStore((state) => state.mapView);
 
-  const routeSubmit = useCallback(async () => {
-    if (locations.length >= 1 && Object.keys(start).length > 0) {
-      setError("");
-      setSteps([]);
-      let destinationStrs = "";
-      const startStr = `${start.longitude},${start.latitude};`;
-      locations.forEach((location) => {
-        destinationStrs += `${location.longitude},${location.latitude};`;
-      });
-      try {
-        const res = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/${profile}/${startStr}${destinationStrs.substring(
-            0,
-            destinationStrs.length - 1
-          )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
-          { method: "GET" }
-        );
-        const data = await res.json();
-        console.log(data);
-        const routeCoords: number[][] = data.routes[0].geometry.coordinates;
-        const routeSteps: Array<{
-          steps: { maneuver: { instruction: string } }[];
-        }> = data.routes[0].legs;
-
-        for (const leg of routeSteps) {
-          for (const step of leg.steps) {
-            setSteps((prev) => [...prev, step]);
-          }
-        }
-
-        const geojson: Feature = {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "LineString",
-            coordinates: routeCoords,
-          },
-        };
-
-        addGeoJson(geojson);
-
-        const routeLayer: LineLayerSpecification = {
-          id: "route",
-          type: "line",
-          source: "geojson",
-          layout: {
-            "line-join": "round",
-            "line-cap": "round",
-          },
-          paint: {
-            "line-color": "#eb6028",
-            "line-width": 5,
-            "line-opacity": 0.75,
-          },
-        };
-
-        addLayer(routeLayer);
-
-        setMapView({
-          longitude: start.longitude ?? mapView.longitude,
-          latitude: start.latitude ?? mapView.latitude,
-          zoom: 13,
+  const routeSubmit = useCallback(
+    async (mode: string) => {
+      console.log(mode);
+      if (locations.length >= 1 && Object.keys(start).length > 0) {
+        setError("");
+        setSteps([]);
+        let destinationStrs = "";
+        const startStr = `${start.longitude},${start.latitude};`;
+        locations.forEach((location) => {
+          destinationStrs += `${location.longitude},${location.latitude};`;
         });
+        try {
+          const res = await fetch(
+            `https://api.mapbox.com/directions/v5/mapbox/${mode}/${startStr}${destinationStrs.substring(
+              0,
+              destinationStrs.length - 1
+            )}?steps=true&geometries=geojson&access_token=${API_KEY}`,
+            { method: "GET" }
+          );
+          const data = await res.json();
+          console.log(data);
+          const routeCoords: number[][] = data.routes[0].geometry.coordinates;
+          const routeSteps: Array<{
+            steps: { maneuver: { instruction: string } }[];
+          }> = data.routes[0].legs;
 
-        setCanSave(true);
-      } catch (e) {
-        setError(`An error occurred. Please try again. {${e}}`);
+          for (const leg of routeSteps) {
+            for (const step of leg.steps) {
+              setSteps((prev) => [...prev, step]);
+            }
+          }
+
+          const geojson: Feature = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: routeCoords,
+            },
+          };
+
+          addGeoJson(geojson);
+
+          const routeLayer: LineLayerSpecification = {
+            id: "route",
+            type: "line",
+            source: "geojson",
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "#eb6028",
+              "line-width": 5,
+              "line-opacity": 0.75,
+            },
+          };
+
+          addLayer(routeLayer);
+
+          setMapView({
+            longitude: start.longitude ?? mapView.longitude,
+            latitude: start.latitude ?? mapView.latitude,
+            zoom: 13,
+          });
+
+          setCanSave(true);
+        } catch (e) {
+          setError(`An error occurred. Please try again. {${e}}`);
+        }
+      } else {
+        setError("Please enter a starting point and at least one destination.");
       }
-    } else {
-      setError("Please enter a starting point and at least one destination.");
-    }
-  }, [
-    locations,
-    start,
-    profile,
-    addGeoJson,
-    addLayer,
-    setMapView,
-    mapView.longitude,
-    mapView.latitude,
-  ]);
+    },
+    [
+      locations,
+      start,
+      addGeoJson,
+      addLayer,
+      setMapView,
+      mapView.longitude,
+      mapView.latitude,
+    ]
+  );
 
   useEffect(() => {
     if (searchParams.get("from_saved") === "true") {
-      routeSubmit();
+      routeSubmit(profile); // use current profile from store for this case
     }
-  }, [routeSubmit, searchParams]);
+  }, [routeSubmit, searchParams, profile]);
 
   useEffect(() => {
     setValue(start.address || "");
@@ -197,7 +200,10 @@ function DirectionsBar() {
               </p>
             ))}
           {error && <p className="text-red-500">{error}</p>}
-          <button className="btn-primary" onClick={routeSubmit}>
+          <button
+            className="btn-primary"
+            onClick={() => routeSubmit("driving")}
+          >
             Get Route
           </button>
           <button
