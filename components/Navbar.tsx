@@ -22,16 +22,17 @@ async function Navbar() {
   const user = await currentUser();
 
   return (
-    <header className="bg-black py-4 border-b-white/30 border-b-2">
+    <header className="bg-black py-4 border-b-white/10 border-b">
       <nav className="container flex justify-between items-center">
-        <Link href="/">
+        <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/hauntmap-logo.png"
-            width={216}
-            height={50}
-            alt="HauntMap Logo"
-            className="w-[144px]"
+            src="/trek-or-treat-logo.png"
+            width={32}
+            height={32}
+            alt="Trek or Treat Logo"
+            className="w-8"
           />
+          <h1 className="text-white text-2xl font-bold">Trek or Treat</h1>
         </Link>
         <div>
           <SignedOut>

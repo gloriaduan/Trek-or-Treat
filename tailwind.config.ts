@@ -15,7 +15,7 @@ export default withUt({
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
-        black: "#221E22",
+        black: "#131214",
         white: "#f7f7f7",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

@@ -54,7 +54,7 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
         {...mapView}
         onMove={(evt) => setViewState(evt.viewState)}
         style={{}}
-        mapStyle="mapbox://styles/9loria/cm494mxig006i01qog6g3fufo"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
       >
         {locations.map((location) => (
           <Marker
