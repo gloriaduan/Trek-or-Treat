@@ -18,6 +18,7 @@ import { z } from "zod";
 import { addRoute, updateRoute } from "@/lib/route";
 import { useRouteStore } from "@/store/app-store";
 import { updateLocation } from "@/lib/locations";
+import { toast, Toaster } from "sonner";
 
 interface SaveModalProps {
   isOpen: boolean;
@@ -78,18 +79,22 @@ function SaveModal({
 
       if (response.status === "SUCCESS") {
         console.log("Route saved successfully.");
+        toast.success("Route saved successfully.");
         setErrors({});
       } else {
-        setErrors({ general: "Please log in to save routes." });
+        toast.warning("Error saving route: " + (response.error as string));
+        // setErrors({ general: response.error as string });
       }
     } catch (error) {
       console.log(error);
       if (error instanceof z.ZodError) {
         const fieldErrors = error.flatten().fieldErrors;
         setErrors(fieldErrors as unknown as Record<string, string>);
+        toast.warning("Please fill in all required fields.");
         return { ...prevState, error: "Validation failed." };
       }
 
+      toast.warning("Error saving route.");
       return { ...prevState, error: "Failed to submit form." };
     }
   };
@@ -178,6 +183,7 @@ function SaveModal({
         setIsOpen(false);
       }}
     >
+      <Toaster />
       <DialogContent>
         {state && state.error && state.error !== "" && (
           <div className="text-red-500 mb-2">{state.error}</div>
