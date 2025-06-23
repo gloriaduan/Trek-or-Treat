@@ -47,9 +47,9 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
       <Map
         mapboxAccessToken={API_KEY}
         initialViewState={{
-          longitude: -79.62275045355916,
-          latitude: 43.5870256842269,
-          zoom: 13,
+          longitude: -79.50852043645438,
+          latitude: 43.62057394024622,
+          zoom: 10,
         }}
         {...mapView}
         onMove={(evt) => setViewState(evt.viewState)}

@@ -10,6 +10,8 @@ import {
 } from "@/store/app-store";
 import SaveModal from "@/components/SaveModal";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import HalloweenLoading from "@/components/SpookyLoading";
 
 function SavedRoutesPage() {
   const routes = useRouteStore((state) => state.routes);
@@ -71,14 +73,16 @@ function SavedRoutesPage() {
       const response = await deleteRoute(id);
       if (response.status === "SUCCESS") {
         console.log("Route deleted successfully.");
+        toast.success("Route deleted successfully.");
         removeRouteFromStore(id);
       } else {
         console.error("Failed to delete route:", response.error);
-        alert(`Error deleting route: ${response.error || "Unknown error"}`);
+        toast.error(
+          `Error deleting route: ${response.error || "Unknown error"}`
+        );
       }
     } catch (error: unknown) {
-      console.error("Error in handleDelete for route:", error);
-      alert(`Error: ${(error as Error).message || "Could not delete route"}`);
+      toast.error(`Error deleting route: ${(error as Error).message}`);
     }
   };
 
@@ -113,15 +117,11 @@ function SavedRoutesPage() {
         addDestination(location_obj);
       }
     });
-    router.push("/?from_saved=true");
+    router.push("/explore?from_saved=true");
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading saved routes...
-      </div>
-    );
+    return <HalloweenLoading />;
   }
 
   return (

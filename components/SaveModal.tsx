@@ -124,10 +124,12 @@ function SaveModal({
         });
 
         if (response.error) {
+          toast.warning("Error updating post: " + response.error);
           setErrors({ general: response.error as string });
           return { ...prevState, error: String(response.error) };
         } else {
           console.log("Post updated successfully.");
+          toast.success("Post updated successfully.");
           setErrors({});
           return { ...prevState, error: "" };
         }
@@ -135,6 +137,7 @@ function SaveModal({
         const response = await updateRoute(data.id, formValues);
 
         if (response.status === "SUCCESS") {
+          toast.success("Route updated successfully.");
           console.log("Route updated successfully.");
           setErrors({});
           console.log(response);
@@ -147,6 +150,7 @@ function SaveModal({
           );
           setIsOpen(false);
         } else {
+          toast.warning("Error updating route: " + (response.error as string));
           setErrors({ general: "Please log in to update routes." });
         }
       }
@@ -183,7 +187,6 @@ function SaveModal({
         setIsOpen(false);
       }}
     >
-      <Toaster />
       <DialogContent>
         {state && state.error && state.error !== "" && (
           <div className="text-red-500 mb-2">{state.error}</div>

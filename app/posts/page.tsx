@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import PostItemAdapter from "./PostItemAdapter";
 import { getUserLocations } from "@/lib/locations";
+import { toast, Toaster } from "sonner";
+import HalloweenLoading from "@/components/SpookyLoading";
 
 export type Post = {
   id: string;
@@ -46,10 +48,11 @@ const Page = () => {
     setPosts((currentPosts) =>
       currentPosts.filter((post) => post.id !== postId)
     );
+    toast.success("Post deleted successfully.");
   };
 
   if (loading) {
-    return <div className="container mx-auto py-8">Loading posts...</div>;
+    return <HalloweenLoading />;
   }
 
   if (error) {
@@ -67,18 +70,20 @@ const Page = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">My Posted Locations</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post: Post) => (
-          <PostItemAdapter
-            key={post.id}
-            post={post}
-            onDeleteSuccess={handlePostDelete}
-          />
-        ))}
+    <>
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-6">My Posted Locations</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post: Post) => (
+            <PostItemAdapter
+              key={post.id}
+              post={post}
+              onDeleteSuccess={handlePostDelete}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

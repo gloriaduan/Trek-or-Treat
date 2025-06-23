@@ -71,7 +71,7 @@ async function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Link href="/posts" className="w-full">
-                        My Posts
+                        My Locations
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>

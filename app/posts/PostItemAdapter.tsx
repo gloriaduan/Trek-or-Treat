@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react"; // For managing a loading state if desired
-import ItemCard from "@/components/ItemCard"; // Use ItemCard
-import SaveModal from "@/components/SaveModal"; // Import SaveModal
+import { useState } from "react";
+import ItemCard from "@/components/ItemCard";
+import SaveModal from "@/components/SaveModal";
 import { deleteLocation } from "@/lib/locations";
+import { toast, Toaster } from "sonner";
 
 export type Post = {
   id: string;
   description: string;
   address: string;
-  images?: string[]; // Optional: if you want to use images later
-  createdAt: Date; // Added createdAt
-  // Add any other fields you expect from getUserLocations that PostItem might need
+  images?: string[];
+  createdAt: Date;
 };
 
 interface PostItemAdapterProps {
@@ -35,7 +35,7 @@ export default function PostItemAdapter({
     const result = await deleteLocation(id);
     if (result?.error) {
       console.error("PostItemAdapter: Error deleting post - ", result.error);
-      alert(`Error deleting post: ${result.error}`);
+      toast.warning(`Error deleting post: ${result.error}`);
     } else {
       if (onDeleteSuccess) {
         onDeleteSuccess(id);

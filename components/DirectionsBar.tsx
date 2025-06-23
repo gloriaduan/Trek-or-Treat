@@ -62,7 +62,7 @@ function DirectionsBar() {
             { method: "GET" }
           );
           const data = await res.json();
-          console.log(data);
+          // console.log(data);
           const routeCoords: number[][] = data.routes[0].geometry.coordinates;
           const routeSteps: Array<{
             steps: { maneuver: { instruction: string } }[];
@@ -131,7 +131,8 @@ function DirectionsBar() {
     if (searchParams.get("from_saved") === "true") {
       routeSubmit(profile); // use current profile from store for this case
     }
-  }, [routeSubmit, searchParams, profile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setValue(start.address || "");

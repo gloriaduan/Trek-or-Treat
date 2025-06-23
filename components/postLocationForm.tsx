@@ -13,6 +13,7 @@ import { z } from "zod";
 import { deleteFile, postLocation } from "@/lib/locations";
 import { API_KEY } from "@/lib/config";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface GeocoderProps {
   accessToken: string;
@@ -55,7 +56,6 @@ const PostLocationForm = () => {
 
   const handleSubmit = async (_: unknown, formData: FormData) => {
     try {
-      console.log("Form submitted.");
       const formValues = {
         address: address,
         longitude: longitude,
@@ -64,20 +64,19 @@ const PostLocationForm = () => {
         images: images,
       };
 
-      // console.log(formValues);
-
       await locationSchema.parseAsync(formValues);
 
       const response = await postLocation(formValues);
 
       if (response.status === "SUCCESS") {
         console.log("Location posted successfully");
+        toast.success("Location posted successfully");
         setErrors({});
         setLongitude(0);
         setLatitude(0);
         setAddress("");
         setImages([]);
-        router.push("/");
+        router.push("/explore");
         // return response;
       }
     } catch (error) {
@@ -89,6 +88,8 @@ const PostLocationForm = () => {
 
         return { error: "Validation failed." };
       }
+
+      toast.warning("Error submitting form: " + (error as Error).message);
 
       return {
         error: "Failed to submit form.",
@@ -113,11 +114,14 @@ const PostLocationForm = () => {
 
       if (response.status === "SUCCESS") {
         setImages((prev) => prev.filter((img) => img.key != key));
+        toast.success("File deleted successfully");
         console.log("file deleted");
       } else {
+        toast.warning("Failed to delete file: " + response.error);
         console.error("Failed to delete file");
       }
     } catch (error) {
+      toast.warning("Error deleting file: " + (error as Error).message);
       console.error("Error deleting file:", error);
     }
   };
@@ -238,12 +242,12 @@ const PostLocationForm = () => {
                   })),
                 ]);
               }
+              toast.success("Upload completed.");
               // Do something with the response
               // alert("Upload Completed");
             }}
             onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
+              toast.warning("Upload failed: " + error.message);
             }}
           />
           {errors.images && <p className="form-error">{errors.images}</p>}

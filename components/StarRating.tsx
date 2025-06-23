@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { submitRating } from "@/lib/locations";
+import { toast } from "sonner";
 
 interface StarRatingProps {
   onChange?: (rating: number) => void;
@@ -46,8 +47,11 @@ export function StarRating({
 
       if (response.status === "SUCCESS") {
         setSubmitMessage("Rating submitted successfully.");
+      } else {
+        toast.warning("Failed to submit rating. Please login or try again.");
       }
     } catch (error) {
+      toast.warning("Failed to submit rating. Please try again.");
       console.log(`Error occurred: ${error}`);
     }
   };
