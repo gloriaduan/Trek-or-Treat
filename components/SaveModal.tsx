@@ -18,7 +18,7 @@ import { z } from "zod";
 import { addRoute, updateRoute } from "@/lib/route";
 import { useRouteStore } from "@/store/app-store";
 import { updateLocation } from "@/lib/locations";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 interface SaveModalProps {
   isOpen: boolean;

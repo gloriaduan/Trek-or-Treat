@@ -3,16 +3,15 @@
 import { useEffect, useState } from "react";
 import PostItemAdapter from "./PostItemAdapter";
 import { getUserLocations } from "@/lib/locations";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import HalloweenLoading from "@/components/SpookyLoading";
 
 export type Post = {
   id: string;
   description: string;
   address: string;
-  images?: string[]; // Optional: if you want to use images later
-  createdAt: Date; // Added createdAt
-  // Add any other fields you expect from getUserLocations that PostItem might need
+  images?: string[];
+  createdAt: Date;
 };
 
 const Page = () => {

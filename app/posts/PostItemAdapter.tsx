@@ -4,7 +4,7 @@ import { useState } from "react";
 import ItemCard from "@/components/ItemCard";
 import SaveModal from "@/components/SaveModal";
 import { deleteLocation } from "@/lib/locations";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export type Post = {
   id: string;
