@@ -79,9 +79,9 @@ interface RouteStore {
 export const useViewStore = create<ViewStore>()(
   devtools((set) => ({
     mapView: {
-      longitude: -79.62275045355916,
-      latitude: 43.5870256842269,
-      zoom: 13,
+      longitude: -79.50852043645438,
+      latitude: 43.62057394024622,
+      zoom: 10,
     },
     setView: (coords: any) => {
       const { longitude, latitude, zoom } = coords;

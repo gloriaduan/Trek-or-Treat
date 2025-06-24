@@ -215,14 +215,16 @@ export default function Component() {
                     Start Planning <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-black hover:bg-white hover:text-gray-900 px-8 py-3 text-lg"
-                >
-                  <Github className="mr-2 h-5 w-5" />
-                  View on GitHub
-                </Button>
+                <Link href="https://github.com/gloriaduan/Trek-or-Treat">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-white text-black hover:bg-white hover:text-gray-900 px-8 py-3 text-lg"
+                  >
+                    <Github className="mr-2 h-5 w-5" />
+                    View on GitHub
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -270,8 +272,8 @@ export default function Component() {
                   Create Your Route
                 </h3>
                 <p className="text-gray-300">
-                  Select your favorite locations and let our smart algorithm
-                  create the most efficient route for maximum candy collection.
+                  Select your favorite locations and let MapBox create the most
+                  efficient route for maximum candy collection.
                 </p>
               </div>
 
@@ -283,8 +285,8 @@ export default function Component() {
                   Save & Go
                 </h3>
                 <p className="text-gray-300">
-                  Save your route, share it with family, and use it on Halloween
-                  night for a perfectly planned trick-or-treat adventure.
+                  Save your route and use it on Halloween night for a perfectly
+                  planned trick-or-treat adventure.
                 </p>
               </div>
             </div>

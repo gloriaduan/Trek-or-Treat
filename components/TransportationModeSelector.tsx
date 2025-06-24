@@ -36,7 +36,7 @@ export default function TransportationModeSelector({
       <button
         onClick={() => handleModeChange("driving")}
         className={cn(
-          "flex flex-1 items-center justify-center gap-1 rounded-full py-1.5 transition-all text-xs",
+          "flex flex-1 items-center justify-center gap-1 text-black rounded-full py-1.5 transition-all text-xs",
           profile === "driving"
             ? "bg-primary text-primary-foreground"
             : "hover:bg-muted"
@@ -50,7 +50,7 @@ export default function TransportationModeSelector({
       <button
         onClick={() => handleModeChange("walking")}
         className={cn(
-          "flex flex-1 items-center justify-center gap-1 rounded-full py-1.5 transition-all text-xs",
+          "flex flex-1 items-center justify-center text-black gap-1 rounded-full py-1.5 transition-all text-xs",
           profile === "walking"
             ? "bg-primary text-primary-foreground"
             : "hover:bg-muted"
@@ -64,7 +64,7 @@ export default function TransportationModeSelector({
       <button
         onClick={() => handleModeChange("cycling")}
         className={cn(
-          "flex flex-1 items-center justify-center gap-1 rounded-full py-1.5 transition-all text-xs",
+          "flex flex-1 items-center justify-center gap-1 text-black rounded-full py-1.5 transition-all text-xs",
           profile === "cycling"
             ? "bg-primary text-primary-foreground"
             : "hover:bg-muted"
