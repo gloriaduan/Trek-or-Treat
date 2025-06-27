@@ -27,9 +27,7 @@ export const locationSchema = z.object({
 export const routeSaveSchema = z.object({
   name: z
     .string()
-    .min(10, { message: "No title." })
+    .min(5, { message: "Title blank or too short" })
     .max(250, { message: "Title too long." }),
-  description: z
-    .string()
-    .max(300, { message: "Description is too long." }),
-})
+  description: z.string().max(300, { message: "Description is too long." }),
+});
