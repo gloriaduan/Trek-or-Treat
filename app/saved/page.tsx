@@ -134,7 +134,7 @@ function SavedRoutesPage() {
           data={currentRouteDataForModal}
         />
       )}
-      <div className="py-16">
+      <div className="py-16 dark-bg flex-1">
         <div className="container">
           <h1 className="mb-6 text-3xl font-bold">Saved Routes</h1>
           {routes.length === 0 && !loading && (

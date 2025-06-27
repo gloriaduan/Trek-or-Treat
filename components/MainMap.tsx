@@ -53,7 +53,7 @@ const MainMap = ({ locations = [] }: MainMapProps) => {
         }}
         {...mapView}
         onMove={(evt) => setViewState(evt.viewState)}
-        style={{}}
+        style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
       >
         {locations.map((location) => (

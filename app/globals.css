@@ -34,7 +34,7 @@ html {
   }
 
   .h-full-height {
-    height: calc(100vh - 74px);
+    height: calc(100vh);
   }
 
   .form-error {
@@ -185,11 +185,11 @@ html {
   * {
     @apply border-border;
   }
-  body {
-    @apply text-white;
-    background-image: linear-gradient(135deg, #131314 0%, #242525 100%);
-    /* Remove or comment out bg-black if present to avoid override */
-  }
+}
+
+.dark-bg {
+  @apply text-white;
+  background-image: linear-gradient(135deg, #131314 0%, #242525 100%);
 }
 
 /* CLERK PROFILE PAGE */
