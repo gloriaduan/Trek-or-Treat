@@ -49,6 +49,7 @@ export function StarRating({
         setSubmitMessage("Rating submitted successfully.");
       } else {
         toast.warning("Failed to submit rating. Please login or try again.");
+        setSubmitMessage("Failed to submit rating.");
       }
     } catch (error) {
       toast.warning("Failed to submit rating. Please try again.");

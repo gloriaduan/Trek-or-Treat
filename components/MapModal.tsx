@@ -72,61 +72,63 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
       }}
     >
       <DialogContent>
-        <div className="embla pt-6 relative" ref={emblaRef}>
-          <div className="embla__container">
-            {isOpen &&
-              currLocation.images.map((image, index) => (
-                <div key={index} className="embla__slide relative h-60">
-                  <Image
-                    alt="image"
-                    fill={true}
-                    sizes="100vw"
-                    src={`${image}`}
-                    className="rounded-lg"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-              ))}
+        <div className="max-h-[90vh] overflow-y-auto rounded-lg">
+          <div className="embla pt-6 relative" ref={emblaRef}>
+            <div className="embla__container">
+              {isOpen &&
+                currLocation.images.map((image, index) => (
+                  <div key={index} className="embla__slide relative h-60">
+                    <Image
+                      alt="image"
+                      fill={true}
+                      sizes="100vw"
+                      src={`${image}`}
+                      className="rounded-lg"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                ))}
+            </div>
+            <button
+              className="embla__prev absolute left-0 top-2/4"
+              onClick={scrollPrev}
+            >
+              <ChevronLeft color="white" />
+            </button>
+            <button
+              className="embla__next absolute right-0 top-2/4"
+              onClick={scrollNext}
+            >
+              <ChevronRight color="white" />
+            </button>
           </div>
-          <button
-            className="embla__prev absolute left-0 top-2/4"
-            onClick={scrollPrev}
-          >
-            <ChevronLeft color="white" />
-          </button>
-          <button
-            className="embla__next absolute right-0 top-2/4"
-            onClick={scrollNext}
-          >
-            <ChevronRight color="white" />
-          </button>
-        </div>
-        <DialogHeader>
-          <DialogTitle className="mb-2 text-2xl">
-            {currLocation.address}
-          </DialogTitle>
-          <div className="flex items-center">
-            <Star className="fill-current text-primary" />
-            <p className="ml-2 text-primary">
-              {currLocation.avgRating?.toFixed(1)}
-            </p>
+          <DialogHeader>
+            <DialogTitle className="mb-2 text-2xl">
+              {currLocation.address}
+            </DialogTitle>
+            <div className="flex items-center">
+              <Star className="fill-current text-primary" />
+              <p className="ml-2 text-primary">
+                {currLocation.avgRating?.toFixed(1)}
+              </p>
+            </div>
+          </DialogHeader>
+          <DialogDescription className="mb-5">
+            {currLocation.description}
+          </DialogDescription>
+          <div className="mb-5">
+            <StarRating
+              initialRating={rating}
+              locationId={currLocation.id}
+              onChange={(rating) => setRating(rating)}
+            />
           </div>
-        </DialogHeader>
-        <DialogDescription className="mb-5">
-          {currLocation.description}
-        </DialogDescription>
-        <div className="mb-5">
-          <StarRating
-            initialRating={rating}
-            locationId={currLocation.id}
-            onChange={(rating) => setRating(rating)}
-          />
+          <DialogFooter className="sm:justify-stretch sm:flex-col">
+            <button className="btn-primary" onClick={handleAddDestination}>
+              Add Destination
+            </button>
+          </DialogFooter>
         </div>
-        <DialogFooter className="sm:justify-stretch sm:flex-col">
-          <button className="btn-primary" onClick={handleAddDestination}>
-            Add Destination
-          </button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

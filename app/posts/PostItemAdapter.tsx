@@ -85,7 +85,6 @@ export default function PostItemAdapter({
         itemType="post"
         onDelete={handleDelete}
         onEdit={handleEdit}
-        primaryActionText="View"
         onPrimaryAction={(id) => (window.location.href = `/posts/${id}`)}
       />
     </>
