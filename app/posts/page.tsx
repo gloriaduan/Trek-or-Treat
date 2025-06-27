@@ -54,25 +54,16 @@ const Page = () => {
     return <HalloweenLoading />;
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto py-8">Error loading posts: {error}</div>
-    );
-  }
-
-  if (posts.length === 0) {
-    return (
-      <div className="container mx-auto py-8">
-        You haven&apos;t posted any locations yet.
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="dark-bg flex-1">
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold mb-6">My Posted Locations</h1>
+          {error && (
+            <div className="text-red-500 mb-4">
+              Error loading posts: {error}
+            </div>
+          )}
           {posts.length === 0 && !loading ? (
             <p>You haven&apos;t saved any routes yet.</p>
           ) : (
