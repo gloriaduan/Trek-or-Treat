@@ -137,26 +137,27 @@ function SavedRoutesPage() {
       <div className="py-16 dark-bg flex-1">
         <div className="container">
           <h1 className="mb-6 text-3xl font-bold">Saved Routes</h1>
-          {routes.length === 0 && !loading && (
+          {routes.length === 0 && !loading ? (
             <p>You haven&apos;t saved any routes yet.</p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {routes.map((route) => (
+                <ItemCard
+                  key={route.id}
+                  id={route.id}
+                  title={route.name}
+                  description={route.description}
+                  date={route.createdAt.toISOString()}
+                  imageUrl={route.locations?.[0]?.location?.images?.[0]}
+                  itemType="route"
+                  primaryActionText="Use"
+                  onDelete={() => handleRouteDelete(route.id)}
+                  onEdit={() => handleRouteEdit(route.id)}
+                  onPrimaryAction={() => handleRouteUse(route.id)}
+                />
+              ))}
+            </div>
           )}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {routes.map((route) => (
-              <ItemCard
-                key={route.id}
-                id={route.id}
-                title={route.name}
-                description={route.description}
-                date={route.createdAt.toISOString()}
-                imageUrl={route.locations?.[0]?.location?.images?.[0]}
-                itemType="route"
-                primaryActionText="Use"
-                onDelete={() => handleRouteDelete(route.id)}
-                onEdit={() => handleRouteEdit(route.id)}
-                onPrimaryAction={() => handleRouteUse(route.id)}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </>
