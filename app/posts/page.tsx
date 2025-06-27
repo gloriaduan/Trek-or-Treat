@@ -65,7 +65,7 @@ const Page = () => {
             </div>
           )}
           {posts.length === 0 && !loading ? (
-            <p>You haven&apos;t saved any routes yet.</p>
+            <p>You haven&apos;t posted any locations yet.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post: Post) => (
