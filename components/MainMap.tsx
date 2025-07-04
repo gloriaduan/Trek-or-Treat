@@ -28,7 +28,7 @@ interface MainMapProps {
   locations?: CustomLocation[];
 }
 
-const MainMap = ({ locations = [] }: MainMapProps) => {
+const MainMap = ({ locations = [], ...props }: MainMapProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currLocation, setCurrLocation] = useState({} as CustomLocation);
   const layer = useLayerStore((state) => state.layer);

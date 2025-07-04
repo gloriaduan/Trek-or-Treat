@@ -104,7 +104,7 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
           </div>
           <DialogHeader>
             <DialogTitle className="mb-2 text-2xl">
-              {currLocation.address}
+              <span data-testid="marker-address">{currLocation.address}</span>
             </DialogTitle>
             <div className="flex items-center">
               <Star className="fill-current text-primary" />
@@ -124,7 +124,11 @@ function MapModal({ isOpen, setIsOpen, currLocation }: MapModalProps) {
             />
           </div>
           <DialogFooter className="sm:justify-stretch sm:flex-col">
-            <button className="btn-primary" onClick={handleAddDestination}>
+            <button
+              data-testid="add-destination-btn"
+              className="btn-primary"
+              onClick={handleAddDestination}
+            >
               Add Destination
             </button>
           </DialogFooter>

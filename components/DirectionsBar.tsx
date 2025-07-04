@@ -176,6 +176,7 @@ function DirectionsBar() {
           >
             <Label htmlFor="address">Choose a starting point:</Label>
             <Input
+              data-testid="start-destination-input"
               type="text"
               id="address"
               placeholder="Enter a place..."
@@ -194,12 +195,18 @@ function DirectionsBar() {
               </span>
             </p>
           )}
-          {locations &&
-            locations.map((location, i) => (
-              <p className="text-muted" key={i}>
-                {location.address}
-              </p>
-            ))}
+          <div data-testid="destinations-list">
+            {locations &&
+              locations.map((location, i) => (
+                <p
+                  data-testid="destination-item"
+                  className="text-muted"
+                  key={i}
+                >
+                  {location.address}
+                </p>
+              ))}
+          </div>
           {error && <p className="text-red-500">{error}</p>}
           <button
             className="btn-primary"

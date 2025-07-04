@@ -3,7 +3,7 @@
 import { Ghost } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function HalloweenLoading() {
+export default function HalloweenLoading({ ...props }) {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
@@ -15,7 +15,10 @@ export default function HalloweenLoading() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
+    <div
+      {...props}
+      className="min-h-screen bg-black flex items-center justify-center"
+    >
       <div className="text-center">
         {/* Three floating ghosts */}
         <div className="flex justify-center space-x-6 mb-8">
