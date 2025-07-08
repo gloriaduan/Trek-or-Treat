@@ -25,13 +25,28 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+Cypress.Commands.add("login", () => {
+  cy.session("user-session", () => {
+    // Make sure you're visiting your app (which should use the same key)
+    cy.visit("http://localhost:3000/sign-in");
+
+    // These credentials should exist in whatever Clerk instance you're using
+    cy.get('input[name="identifier"]').type(Cypress.env("TEST_USER_EMAIL"));
+
+    cy.get('input[name="password"]').type(Cypress.env("TEST_USER_PASSWORD"));
+
+    cy.get('button[type="submit"]').click();
+    cy.url().should("not.include", "/sign-in");
+  });
+});
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(email: string, password: string): Chainable<void>;
+    }
+  }
+}
+
+export {}; // Ensure this file is treated as a module

@@ -62,4 +62,28 @@ describe("Explore page", () => {
       cy.get('[data-testid="destination-item"').should("have.length", 2);
     });
   });
+
+  it("Creates a route when destinations are added", () => {
+    cy.visit("http://localhost:3000/explore");
+    cy.get(".mapboxgl-map", { timeout: 15000 }).should("be.visible");
+
+    cy.get(".mapboxgl-marker").eq(0).click();
+    cy.get('[data-testid="add-destination-btn"]').click();
+    cy.get("body").type("{esc}");
+
+    cy.get(".mapboxgl-marker").eq(1).click();
+    cy.get('[data-testid="add-destination-btn"]').click();
+    cy.get("body").type("{esc}");
+
+    cy.get("button").contains("Get Route").click();
+
+    // Test that route data exists by checking if save button is enabled
+    cy.get("button").contains("Save Route").should("not.be.disabled");
+
+    // Check if directions appear
+    cy.get(".directions").should("contain.text", "Directions");
+    cy.get(".directions ol li").should("have.length.greaterThan", 0);
+  });
+
+  // To add transportation mode change tests
 });
